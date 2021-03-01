@@ -11,9 +11,7 @@ trait Instruction {
   def toBigInt: BigInt = {
     BigInt(toBinString, 2)
   }
-  def name : String = {
-    "unknown"
-  }
+  var name = "unknown"
 }
 
 class RInstruction(rd : Int, rs1 : Int, rs2 : Int, opcode : Int) extends Instruction {
@@ -42,6 +40,10 @@ class RInstruction(rd : Int, rs1 : Int, rs2 : Int, opcode : Int) extends Instruc
     val opcode = 0x0C
     formatBin(format, function7, rs2, rs1, function3, rd, opcode)
   }
+
+  override def toString : String = {
+    "%s %d, %d, %d".format(name, rd, rs1, rs2)
+  }
 }
 
 class IInstruction(rd : Int, rs1 : Int, imm : Int, opcode : Int) extends Instruction {
@@ -57,6 +59,10 @@ class IInstruction(rd : Int, rs1 : Int, imm : Int, opcode : Int) extends Instruc
     }
     val opcode = 0x04
     formatBin(format, imm, rs1, function3, rd, opcode)
+  }
+
+  override def toString : String = {
+    "%s %d, %d, %d".format(name, rd, rs1, imm)
   }
 
 }
