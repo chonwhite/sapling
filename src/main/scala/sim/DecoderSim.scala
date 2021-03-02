@@ -2,6 +2,7 @@ package sim
 
 import core.Decoder
 import core.OpCodes.{ALUOpCodes, BranchOpCodes}
+import isa.Assembler
 import spinal.core.sim._
 
 import scala.collection.mutable.ListBuffer
@@ -144,6 +145,24 @@ object DecoderSim {
     println(s"OP $op Success")
   }
 
+  def simAssembly(path: String): Unit = {
+    val assembler = new Assembler()
+    val instructions = assembler.readFile(path)
+
+    SimConfig.withWave.doSim(new Decoder) { dut =>
+      for (inst <- instructions) {
+        println(inst)
+        dut.io.inst.payload #= inst.toBigInt
+        sleep(1)
+        print(dut.io.format.toLong)
+        print(dut.io.imm.toLong)
+        print(dut.io.rd.toLong)
+        print(dut.io.rs1.toLong)
+        print(dut.io.rs2.toLong)
+      }
+    }
+  }
+
   def simRInstruction(op: Int) {
     execSims(op, RFormatSim)
   }
@@ -157,22 +176,24 @@ object DecoderSim {
   }
 
   def main(args: Array[String]): Unit = {
-    //    val rops = ops.clone()
-    //    for (op <- rops) {
-    //      simRInstruction(op)
-    //    }
-    //    simRInstruction(-1)
-    //    ops.remove(1) //remove SUB;
-    //    ops += ALUOpCodes.SRA
-    //
-    //    for (op <- ops) {
-    //      simIMMInstruction(op)
-    //    }
-    //    simIMMInstruction(-1)
-
-    simBInstruction(BranchOpCodes.BEQ)
-    simBInstruction(BranchOpCodes.BGE)
+//    val rops = ops.clone()
+//    for (op <- rops) {
+//      simRInstruction(op)
+//    }
+//    simRInstruction(-1)
+//    ops.remove(1) //remove SUB;
+//    ops += ALUOpCodes.SRA
+//
+//    for (op <- ops) {
+//      simIMMInstruction(op)
+//    }
+//    simIMMInstruction(-1)
+//
+//    simBInstruction(BranchOpCodes.BEQ)
+//    simBInstruction(BranchOpCodes.BGE)
 
     //jalr;
+
+    simAssembly("test/a.s")
   }
 }

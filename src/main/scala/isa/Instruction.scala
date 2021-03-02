@@ -1,7 +1,7 @@
 package isa
 
 import core.OpCodes.ALUOpCodes
-import sim.DecoderSim.formatBin
+// import sim.DecoderSim.formatBin
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
@@ -12,9 +12,7 @@ trait Instruction {
     BigInt(toBinString, 2)
   }
   var name = "unknown"
-}
 
-class RInstruction(rd : Int, rs1 : Int, rs2 : Int, opcode : Int) extends Instruction {
   def formatBin(str: String, args: Int*): String = {
     var list = ListBuffer[Long]()
     for (arg <- args) {
@@ -22,6 +20,9 @@ class RInstruction(rd : Int, rs1 : Int, rs2 : Int, opcode : Int) extends Instruc
     }
     str.format(list: _*).replaceAll("\\s", "")
   }
+}
+
+class RInstruction(rd : Int, rs1 : Int, rs2 : Int, opcode : Int) extends Instruction {
 
   override def toBinString: String = {
     val format = "%07d %05d %05d %03d %05d %05d 11"

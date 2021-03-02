@@ -29,7 +29,7 @@ class RegisterFile(simSignal : Boolean = false) extends Component {
   }
 
   when(io.read2.valid) {
-    readReg(io.read2.payload, io.read1_data)
+    readReg(io.read2.payload, io.read2_data)
   }
 
   when(io.write.valid) {

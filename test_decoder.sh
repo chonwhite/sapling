@@ -1,2 +1,1 @@
-sbt "runMain core.DecoderSim"
-
+sbt "runMain sim.DecoderSim"

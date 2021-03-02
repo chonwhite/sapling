@@ -54,10 +54,10 @@ class Decoder extends Component{
     when(isImmInstruction) {
       io.format := InstructionFormat.IFormat
       mapALUCode(fields.function3, fields.function7Significant, io.opcodes, isRFormat = false)
-      when(fields.function3 === 5) {
-        imm := io.inst.payload(31 downto 20).asSInt
-      }otherwise {
+      when(fields.function3 === 5 || fields.function3 === 1) {
         imm := shiftAmount.resize(12)
+      }otherwise {
+        imm := io.inst.payload(31 downto 20).asSInt
       }
       io.imm := immSignExtended.asBits
     }

@@ -17,7 +17,7 @@ class Cache(width : BitCount, depth : Int) extends Component{
   io.data.payload := 0
 
   when(io.address.valid) {
-    switch(io.address.payload) {
+    switch(io.address.payload >> 2) {
       for (index <- 0 until depth) {
         is(index) {
           io.data.payload := registers(index)
