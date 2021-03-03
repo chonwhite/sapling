@@ -10,8 +10,6 @@ class Assembler {
     val name = line.split(" ")(0).toLowerCase
     val tokens = line.substring(name.length, line.length).split(",")
 
-//    println(name)
-
     var intArgs = ArrayBuffer[Int]()
     if(RV32I.isRFormat(name)) {
       for(t <- tokens) {
@@ -52,11 +50,13 @@ object AssemblerTest {
     )
 
     for (code <- codes) {
-      println(assembler.parseLine(code))
+//      println(assembler.parseLine(code))
     }
-    val instructions = assembler.readFile("test/a.s")
+    val instructions = assembler.readFile("test/imm.s")
     for (inst <- instructions) {
       println(inst)
+      println(inst.toBinString)
+      println(inst.toBigInt)
     }
   }
 }
