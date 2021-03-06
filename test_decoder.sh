@@ -1,1 +1,0 @@
-sbt "runMain sim.DecoderSim"

@@ -1,10 +1,13 @@
 package isa
 
-import core.OpCodes.ALUOpCodes
+import core.OpCodes.{ALUOpCodes, InstructionFormat}
 
 import scala.collection.mutable.ListBuffer
 
 trait Instruction {
+
+  def instructionFormat() : Int
+
   def toBinString: String
 
   def toBigInt: BigInt = {
@@ -18,7 +21,6 @@ trait Instruction {
     for (arg <- args) {
       val str = arg.toBinaryString
       val number = Integer.parseUnsignedInt(str, 2)
-      println(number)
       list += number.toBinaryString.toLong
     }
     str.format(list: _*).replaceAll("\\s", "")
@@ -35,7 +37,8 @@ trait Instruction {
   }
 }
 
-class RInstruction(rd: Int, rs1: Int, rs2: Int, opcode: Int) extends Instruction {
+class RInstruction(val rd: Int, val rs1: Int, val rs2: Int, val opcode: Int) extends Instruction {
+  override def instructionFormat() : Int = InstructionFormat.RFormat
 
   override def toBinString: String = {
     val format = "%07d %05d %05d %03d %05d %05d 11"
@@ -53,7 +56,6 @@ class RInstruction(rd: Int, rs1: Int, rs2: Int, opcode: Int) extends Instruction
     }
     val opcode = 0x0C
 
-
     formatBin(format, function7, rs2, rs1, function3, rd, opcode)
   }
 
@@ -62,7 +64,10 @@ class RInstruction(rd: Int, rs1: Int, rs2: Int, opcode: Int) extends Instruction
   }
 }
 
-class IInstruction(rd: Int, rs1: Int, imm: Int, opcode: Int) extends Instruction {
+class IInstruction(val rd: Int, val rs1: Int, val imm: Int, val opcode: Int) extends Instruction {
+
+  override def instructionFormat() : Int = InstructionFormat.IFormat
+
   override def toBinString: String = {
     val format = "%012d %05d %03d %05d %05d 11"
     var function3 = this.opcode

@@ -23,15 +23,13 @@ class Assembler {
       intArgs += tokens(2).trim.toInt
       return IInstruction(name, intArgs:_*);
     }
-
     null
   }
 
-  def readFile(filename : String) : Array[Instruction] = {
+  def assembleFile(filename : String) : Array[Instruction] = {
     val instructions = ArrayBuffer[Instruction]()
     val source = Source.fromFile(filename)
     for (line <- source.getLines) {
-//      println(line)
       instructions += parseLine(line)
     }
     source.close()
@@ -52,7 +50,7 @@ object AssemblerTest {
     for (code <- codes) {
 //      println(assembler.parseLine(code))
     }
-    val instructions = assembler.readFile("test/imm.s")
+    val instructions = assembler.assembleFile("test/imm.s")
     for (inst <- instructions) {
       println(inst)
       println(inst.toBinString)

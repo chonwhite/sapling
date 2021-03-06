@@ -48,7 +48,7 @@ class Decoder extends Component{
   val ImmDecoder = new Area {
     val isImmInstruction = fields.opcode_6_2 === U(0x04)
     val imm = SInt(width = 12 bits)
-    val shiftAmount = io.inst.payload(24 downto 20).asSInt
+    val shiftAmount = io.inst.payload(25 downto 20).asSInt
     imm := 0
     val immSignExtended = imm.resize(width = 32 bits)
     when(isImmInstruction) {

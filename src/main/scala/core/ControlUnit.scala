@@ -11,7 +11,7 @@ case class DataBlock(width : BitCount) extends Bundle {
 
 class ControlUnit extends Component {
   val PC = new ProgramCounter()
-  val instructionFetcher = new InstructionFetcher(PC)
+  val instructionFetcher = new InstructionFetcher()
   val registerFile = new RegisterFile()
   val decoder = new Decoder();
   val alu = new ALU()

@@ -20,7 +20,7 @@ object RV32I {
 
   val RNameToALUOp = HashMap(
     "add" -> OpCodes.ALUOpCodes.ADD,
-    "sub" -> OpCodes.ALUOpCodes.ADD,
+    "sub" -> OpCodes.ALUOpCodes.SUB,
     "sll" -> OpCodes.ALUOpCodes.SLL,
     "slt" -> OpCodes.ALUOpCodes.SLT,
     "sltu" -> OpCodes.ALUOpCodes.SLTU,
@@ -29,6 +29,8 @@ object RV32I {
     "sra" -> OpCodes.ALUOpCodes.SRA,
     "or" -> OpCodes.ALUOpCodes.OR,
     "and" -> OpCodes.ALUOpCodes.AND)
+
+  val ROpToName = Map() ++ RNameToALUOp.map(_.swap)
 
   val INameToALUOp = HashMap(
     "addi" -> OpCodes.ALUOpCodes.ADD,
@@ -40,6 +42,10 @@ object RV32I {
     "srai" -> OpCodes.ALUOpCodes.SRA,
     "ori" -> OpCodes.ALUOpCodes.OR,
     "andi" -> OpCodes.ALUOpCodes.AND)
+
+  val IOpToName = Map() ++ INameToALUOp.map(_.swap)
+
+  class Opcodes(val name : String, val op : Int)
 
   def isRFormat(name: String): Boolean = {
     RNameToALUOp.keySet.contains(name)
