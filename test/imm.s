@@ -6,3 +6,4 @@ slli t3, t3, 1
 srli t3, t3, 2
 addi t1, zero, 2
 sll t3, t3, t1
+addi zero, zero, 0
