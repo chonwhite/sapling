@@ -1,6 +1,7 @@
 package sim
 
 import core.ControlUnit
+import emulator.MockCPU
 import isa._
 import spinal.core.sim._
 
@@ -11,18 +12,18 @@ class ControlUnitSim extends ControlUnit {
   class InstructionValidator {
 
     def compRegisters(): Unit = {
-      for (index <- mockCPU.registers.indices) {
-        if (mockCPU.registers(index) != registerFile.registers(index).toLong) {
-          println(index)
-          println(mockCPU.registers(index))
-          println(registerFile.registers(index).toLong)
-        }
-        assert(mockCPU.registers(index) == registerFile.registers(index).toLong)
-      }
+//      for (index <- mockCPU.registers.indices) {
+//        if (mockCPU.registers(index) != registerFile.registers(index).toLong) {
+//          println(index)
+//          println(mockCPU.registers(index))
+//          println(registerFile.registers(index).toLong)
+//        }
+//        assert(mockCPU.registers(index) == registerFile.registers(index).toLong)
+//      }
     }
 
     def validate(instruction : Instruction): Unit = {
-      println(instruction.toBigInt)
+      println(instruction)
       compRegisters()
       mockCPU.execInstruction(instruction)
     }

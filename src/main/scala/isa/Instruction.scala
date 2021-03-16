@@ -6,15 +6,15 @@ import scala.collection.mutable.ListBuffer
 
 trait Instruction {
 
-  def instructionFormat() : Int
+  var name = "unknown"
+
+  def instructionFormat(): Int
 
   def toBinString: String
 
   def toBigInt: BigInt = {
     BigInt(toBinString, 2)
   }
-
-  var name = "unknown"
 
   def formatBin(str: String, args: Int*): String = {
     var list = ListBuffer[Long]()
@@ -38,7 +38,7 @@ trait Instruction {
 }
 
 class RInstruction(val rd: Int, val rs1: Int, val rs2: Int, val opcode: Int) extends Instruction {
-  override def instructionFormat() : Int = InstructionFormat.RFormat
+  override def instructionFormat(): Int = InstructionFormat.RFormat
 
   override def toBinString: String = {
     val format = "%07d %05d %05d %03d %05d %05d 11"
@@ -66,10 +66,9 @@ class RInstruction(val rd: Int, val rs1: Int, val rs2: Int, val opcode: Int) ext
 
 class IInstruction(val rd: Int, val rs1: Int, val imm: Int, val opcode: Int) extends Instruction {
 
-  override def instructionFormat() : Int = InstructionFormat.IFormat
+  override def instructionFormat(): Int = InstructionFormat.IFormat
 
   override def toBinString: String = {
-    val format = "%012d %05d %03d %05d %05d 11"
     var function3 = this.opcode
     var imm = this.imm
     this.opcode match {
@@ -86,5 +85,29 @@ class IInstruction(val rd: Int, val rs1: Int, val imm: Int, val opcode: Int) ext
   override def toString: String = {
     "%s %d, %d, %d".format(name, rd, rs1, imm)
   }
+}
 
+class BInstruction(val rs1: Int, val rs2: Int, val imm: Int, val opcode: Int) extends Instruction {
+  override def instructionFormat(): Int = InstructionFormat.BFormat
+
+  override def toBinString: String = {
+    val immString = toBinary(imm, 13)
+
+    backward(12, immString) + backward(10, 5, immString) + toBinary(rs2, 5) +
+      toBinary(rs1, 5) + toBinary(opcode, 3) + backward(4, 1, immString) +
+      backward(11, immString) + toBinary(0x18, 5) + "11"
+  }
+
+  def backward(idx: Int, str: String): String = {
+    val s = str(12 - idx)
+    s.toString
+  }
+
+  def backward(up: Int, down: Int, str: String): String = {
+    str.substring(12 - up, 13 - down)
+  }
+
+  override def toString: String = {
+    "%s %d, %d, %d".format(name, rs2, rs1, imm)
+  }
 }

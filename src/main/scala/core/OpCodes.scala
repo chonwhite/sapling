@@ -66,7 +66,7 @@ object OpCodes {
     val BLT = 4 //branch less than
     val BGE = 5
     val BLTU = 6
-    val BGEu = 7
+    val BGEU = 7
   }
 
   object PCOpCodes {

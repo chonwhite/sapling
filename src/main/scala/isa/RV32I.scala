@@ -43,9 +43,16 @@ object RV32I {
     "ori" -> OpCodes.ALUOpCodes.OR,
     "andi" -> OpCodes.ALUOpCodes.AND)
 
-  val IOpToName = Map() ++ INameToALUOp.map(_.swap)
+  val BNameToOp = HashMap(
+    "beq" -> OpCodes.BranchOpCodes.BEQ,
+    "bne" -> OpCodes.BranchOpCodes.BNE,
+    "blt" -> OpCodes.BranchOpCodes.BLT,
+    "bge" -> OpCodes.BranchOpCodes.BGE,
+    "bltu" -> OpCodes.BranchOpCodes.BLTU,
+    "bgeu" -> OpCodes.BranchOpCodes.BGEU
+  )
 
-  class Opcodes(val name : String, val op : Int)
+  val IOpToName = Map() ++ INameToALUOp.map(_.swap)
 
   def isRFormat(name: String): Boolean = {
     RNameToALUOp.keySet.contains(name)
@@ -55,14 +62,18 @@ object RV32I {
     INameToALUOp.keySet.contains(name)
   }
 
-  def RInstruction(name: String, args: Int*): RInstruction = {
-    val inst = new RInstruction(args(0), args(1), args(2), RNameToALUOp(name))
-    inst.name = name
-    inst
+  def isBFormat(name: String): Boolean = {
+    BNameToOp.keySet.contains(name)
   }
 
   def IInstruction(name: String, args: Int*): IInstruction = {
     val inst = new IInstruction(args(0), args(1), args(2), INameToALUOp(name))
+    inst.name = name
+    inst
+  }
+
+  def BInstruction(name: String, args: Int*): BInstruction = {
+    val inst = new BInstruction(args(0), args(1), args(2), BNameToOp(name))
     inst.name = name
     inst
   }
@@ -77,6 +88,12 @@ object RV32I {
 
   def SLL(rd: Int, rs1: Int, rs2: Int): Instruction = {
     RInstruction("sll", rd, rs1, rs2)
+  }
+
+  def RInstruction(name: String, args: Int*): RInstruction = {
+    val inst = new RInstruction(args(0), args(1), args(2), RNameToALUOp(name))
+    inst.name = name
+    inst
   }
 
   def SLT(rd: Int, rs1: Int, rs2: Int): Instruction = {
@@ -142,6 +159,8 @@ object RV32I {
   def ANDI(rd: Int, rs1: Int, imm: Int): Instruction = {
     new IInstruction(rd, rs1, imm, OpCodes.ALUOpCodes.AND)
   }
+
+  class Opcodes(val name: String, val op: Int)
 }
 
 

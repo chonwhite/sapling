@@ -6,7 +6,7 @@ class ControlUnitTest extends BaseTest [ControlUnitSim]{
   it must "xxx" in {
     simulator.doSim{
       dut =>
-      dut.simFile("test/imm.s")
+      dut.simFile("test/branch.S")
     }
   }
 

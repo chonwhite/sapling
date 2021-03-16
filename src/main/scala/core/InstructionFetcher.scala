@@ -13,7 +13,9 @@ class InstructionFetcher() extends Component {
   }
 
   val assembler = new Assembler()
-  val instructions = assembler.assembleFile("test/imm.s")
+  var assemblyFile = "test/imm.S"
+  assemblyFile = "test/branch.S"
+  val instructions = assembler.assembleFile(assemblyFile)
   val codes = ArrayBuffer[BigInt]()
   for (inst <- instructions) {
     codes += inst.toBigInt
@@ -29,7 +31,6 @@ class InstructionFetcher() extends Component {
   val instructionCache = new InstructionCache(cacheConfig) //TODO
   instructionCache.io.address <> io.address
   io.instruction <> instructionCache.io.data
-
 }
 
 object InstructionFetcherVerilog {

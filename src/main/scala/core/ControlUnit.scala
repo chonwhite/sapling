@@ -2,19 +2,27 @@ package core
 
 import spinal.core._
 
-case class DataBlock(width : BitCount) extends Bundle {
+case class DataBlock(width: BitCount) extends Bundle {
   val valid = Bool
   val payload = UInt(width = width)
   valid := False
-//  payload := 0
 }
 
 class ControlUnit extends Component {
+  val signedZero = SInt(width = 32 bits)
+  signedZero := 0
+  val unsignedZero = UInt(width = 32 bits)
+  unsignedZero := 0
+
   val PC = new ProgramCounter()
   val instructionFetcher = new InstructionFetcher()
   val registerFile = new RegisterFile()
   val decoder = new Decoder();
   val alu = new ALU()
+
+  instructionFetcher.io.address << PC.io.address
+  decoder.io.inst << instructionFetcher.io.instruction
+  registerFile.io.write_data <> alu.io.res
 
   val PCData = new Area {
     val op = PC.io.op.clone()
@@ -30,6 +38,10 @@ class ControlUnit extends Component {
     val opcodes = UInt(width = alu.io.op.getWidth bits)
     val A = Bits(width = 32 bits)
     val B = Bits(width = 32 bits)
+
+    val signedRes = alu.io.res.asSInt
+    val unsignedRes = alu.io.res.asUInt
+
     opcodes := OpCodes.ALUOpCodes.ADD // noop
     B := 0
 
@@ -40,7 +52,22 @@ class ControlUnit extends Component {
     alu.io.s2 <> B
   }
 
-  val regFileData = new Area{
+  val Branch = new Area {
+    val taken = Bool()
+    taken := False
+
+    when(taken) {
+      PCData.op := OpCodes.PCOpCodes.ADD_OFFSET
+      PCData.imm := decoder.io.imm
+    } otherwise {
+      PCData.op := OpCodes.PCOpCodes.INCREMENT
+      PCData.imm := 0
+    }
+    //TODO jump
+
+  }
+
+  val regFileData = new Area {
     val reg1 = DataBlock(width = 5 bits)
     val reg2 = DataBlock(width = 5 bits)
     val write = DataBlock(width = 5 bits)
@@ -50,13 +77,13 @@ class ControlUnit extends Component {
     registerFile.io.read2.valid <> reg2.valid
     registerFile.io.read2.payload <> reg2.payload
     registerFile.io.write.valid <> write.valid
-    registerFile.io.write.payload <>write.payload
+    registerFile.io.write.payload <> write.payload
 
     reg1.payload <> decoder.io.rs1
     reg2.payload <> decoder.io.rs2
     write.payload <> decoder.io.rd
 
-    def enableReg(reg : Bool, enable : Boolean) {
+    def enableReg(reg: Bool, enable: Boolean) {
       if (enable) {
         reg := True
       } else {
@@ -64,33 +91,52 @@ class ControlUnit extends Component {
       }
     }
 
-    def enableResisters(enables : Array[Boolean]): Unit = {
+    def enableResisters(enables: Array[Boolean]): Unit = {
       enableReg(reg1.valid, enables(0))
       enableReg(reg2.valid, enables(1))
       enableReg(write.valid, enables(2))
     }
   }
 
-  instructionFetcher.io.address << PC.io.address
-  decoder.io.inst << instructionFetcher.io.instruction
-  registerFile.io.write_data <> alu.io.res
-
   switch(decoder.io.format) {
     is(OpCodes.InstructionFormat.RFormat) {
       ALUData.opcodes := decoder.io.opcodes
-
-      regFileData.enableResisters(Array[Boolean](true, true, true ))
+      regFileData.enableResisters(Array[Boolean](true, true, true))
       ALUData.B := registerFile.io.read2_data
-      PCData.op := OpCodes.PCOpCodes.INCREMENT
     }
     is(OpCodes.InstructionFormat.IFormat) {
       ALUData.opcodes := decoder.io.opcodes
-      regFileData.enableResisters(Array[Boolean](true, false, true ))
+      regFileData.enableResisters(Array[Boolean](true, false, true))
       ALUData.B := decoder.io.imm
     }
     is(OpCodes.InstructionFormat.BFormat) {
-      PCData.op := decoder.io.opcodes.resized
       PCData.imm := decoder.io.imm
+      ALUData.B := registerFile.io.read2_data
+      ALUData.opcodes := OpCodes.ALUOpCodes.SUB
+      regFileData.enableResisters(Array[Boolean](true, true, false))
+      switch(decoder.io.opcodes) {
+        is(OpCodes.BranchOpCodes.BEQ) {
+          Branch.taken := ALUData.signedRes === signedZero
+        }
+        is(OpCodes.BranchOpCodes.BNE) {
+          Branch.taken := ALUData.signedRes =/= signedZero
+        }
+        is(OpCodes.BranchOpCodes.BLT) {
+          Branch.taken := ALUData.signedRes < signedZero
+        }
+        is(OpCodes.BranchOpCodes.BGE) {
+          Branch.taken := ALUData.signedRes >= signedZero
+        }
+        is(OpCodes.BranchOpCodes.BLTU) {
+          Branch.taken := ALUData.unsignedRes < unsignedZero
+        }
+        is(OpCodes.BranchOpCodes.BGEU) {
+          Branch.taken := ALUData.unsignedRes >= unsignedZero
+        }
+      }
+      when(Branch.taken) {
+
+      }
     }
     default {
 
