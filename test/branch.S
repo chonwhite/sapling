@@ -6,6 +6,3 @@ addi t3, zero, 300
 addi t3, zero, 400
 addi t1, zero, 100
 addi t1, zero, 100
-addi t1, zero, 100
-addi t1, zero, 100
-addi t1, zero, 100

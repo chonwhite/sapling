@@ -5,16 +5,16 @@ import spinal.core.IntToBuilder
 
 import scala.collection.mutable.ArrayBuffer
 
-class ICacheTest extends BaseTest [ICacheSim]{
+class ICacheTest extends BaseTest[ICacheSim] {
   behavior of "ALU"
 
   it must "read data" in {
-    simulator.doSim{ dut =>
+    simulator.doSim { dut =>
       dut.simAssemblyFile("test/imm.s")
     }
   }
 
-  override def dut() : ICacheSim = {
+  override def dut(): ICacheSim = {
     println("dut")
     val assembler = new Assembler()
     val instructions = assembler.assembleFile("test/imm.s")
@@ -27,9 +27,9 @@ class ICacheTest extends BaseTest [ICacheSim]{
       width = 32 bits,
       depth = 256,
       rows = 256,
-      content =codes.toArray
+      content = codes.toArray
     ))
-}
+  }
 
   override def withWave = true
 }

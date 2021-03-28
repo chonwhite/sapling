@@ -7,7 +7,7 @@ case class CacheConfig(
                         width: BitCount,
                         depth: Int,
                         rows: Int,
-                        content : Array[BigInt]
+                        content: Array[BigInt]
                       ) {
   def lineWidth: BitCount = {
     width.value * depth bits
@@ -22,8 +22,8 @@ case class Tag() extends Bundle {
 
 class InstructionCache(config: CacheConfig) extends Component {
   val io = new Bundle {
-    val address = slave Flow (UInt(width = 32 bits))
-    val data = master Flow (Bits(width = config.width))
+    val address = slave Flow UInt(width = 32 bits)
+    val data = master Flow Bits(width = config.width)
   }
 
   val mem = Mem(Bits(32 bits), wordCount = 4096)
@@ -49,9 +49,9 @@ object CacheVerilog {
       rows = 4,
       content = null
     );
-//    val dataBus = new NativeBus()
+    //    val dataBus = new NativeBus()
     SpinalConfig(device = Device.XILINX)
-          .generateVerilog(new InstructionCache(cacheConfig))
+      .generateVerilog(new InstructionCache(cacheConfig))
   }
 }
 

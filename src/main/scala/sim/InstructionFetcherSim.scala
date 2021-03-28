@@ -10,8 +10,8 @@ class InstructionFetcherSim extends InstructionFetcher {
   def fillCache(instructions: Array[Instruction]): Unit = {
     for (index <- instructions.indices) {
       val inst = instructions(index)
-//      instructionCache.mem.write(index, inst.toBigInt)
-//      instructionCache.registers(index) #= inst.toBigInt
+      //      instructionCache.mem.write(index, inst.toBigInt)
+      //      instructionCache.registers(index) #= inst.toBigInt
     }
   }
 }

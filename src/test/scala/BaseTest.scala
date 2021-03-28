@@ -3,9 +3,10 @@ import org.scalatest.flatspec.AnyFlatSpec
 import spinal.core.Component
 import spinal.core.sim.SimConfig
 
-trait BaseTest [T <: Component] extends AnyFlatSpec{
+trait BaseTest[T <: Component] extends AnyFlatSpec {
 
-  def dut() : T
+  def dut(): T
+
   def withWave = false
 
   var config = SimConfig

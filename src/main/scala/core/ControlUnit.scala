@@ -27,6 +27,8 @@ class ControlUnit extends Component {
   val PCData = new Area {
     val op = PC.io.op.clone()
     val imm = PC.io.imm.clone()
+    val address = PC.io.pc.clone()
+
     op := 0
     imm := 0
 
@@ -39,13 +41,16 @@ class ControlUnit extends Component {
     val A = Bits(width = 32 bits)
     val B = Bits(width = 32 bits)
 
-    val signedRes = alu.io.res.asSInt
-    val unsignedRes = alu.io.res.asUInt
+    val zero = alu.io.status.zero
+    val negative = alu.io.status.negative
 
     opcodes := OpCodes.ALUOpCodes.ADD // noop
     B := 0
 
     A <> registerFile.io.read1_data
+    when(decoder.io.format === OpCodes.InstructionFormat.UFormat) {
+      A := PC.io.pc.asBits
+    }
 
     alu.io.op <> opcodes
     alu.io.s1 <> A
@@ -100,48 +105,68 @@ class ControlUnit extends Component {
 
   switch(decoder.io.format) {
     is(OpCodes.InstructionFormat.RFormat) {
-      ALUData.opcodes := decoder.io.opcodes
       regFileData.enableResisters(Array[Boolean](true, true, true))
+      ALUData.opcodes := decoder.io.opcodes
       ALUData.B := registerFile.io.read2_data
     }
     is(OpCodes.InstructionFormat.IFormat) {
-      ALUData.opcodes := decoder.io.opcodes
       regFileData.enableResisters(Array[Boolean](true, false, true))
+      ALUData.opcodes := decoder.io.opcodes
       ALUData.B := decoder.io.imm
     }
     is(OpCodes.InstructionFormat.BFormat) {
+      regFileData.enableResisters(Array[Boolean](true, true, false))
       PCData.imm := decoder.io.imm
       ALUData.B := registerFile.io.read2_data
       ALUData.opcodes := OpCodes.ALUOpCodes.SUB
-      regFileData.enableResisters(Array[Boolean](true, true, false))
+      //TODO move to ALU?
+
       switch(decoder.io.opcodes) {
         is(OpCodes.BranchOpCodes.BEQ) {
-          Branch.taken := ALUData.signedRes === signedZero
+          Branch.taken := ALUData.zero
         }
         is(OpCodes.BranchOpCodes.BNE) {
-          Branch.taken := ALUData.signedRes =/= signedZero
+          Branch.taken := !ALUData.zero
         }
         is(OpCodes.BranchOpCodes.BLT) {
-          Branch.taken := ALUData.signedRes < signedZero
+          Branch.taken := ALUData.negative
         }
         is(OpCodes.BranchOpCodes.BGE) {
-          Branch.taken := ALUData.signedRes >= signedZero
+          Branch.taken := !ALUData.negative
         }
         is(OpCodes.BranchOpCodes.BLTU) {
-          Branch.taken := ALUData.unsignedRes < unsignedZero
+          Branch.taken := ALUData.negative
         }
         is(OpCodes.BranchOpCodes.BGEU) {
-          Branch.taken := ALUData.unsignedRes >= unsignedZero
+          Branch.taken := !ALUData.negative
         }
       }
-      when(Branch.taken) {
-
+    }
+    is(OpCodes.InstructionFormat.UFormat) {
+      regFileData.enableResisters(Array[Boolean](true, false, true))
+      // rs1 should be zero
+      ALUData.opcodes := OpCodes.ALUOpCodes.ADD
+      ALUData.B := decoder.io.imm
+      switch(decoder.io.opcodes) {
+        is(OpCodes.AUIPC) {
+          ALUData.A := PC.io.pc.asBits
+        }
       }
+    }
+    is(OpCodes.InstructionFormat.JFormat) {
+      regFileData.enableResisters(Array[Boolean](false, false, true))
+
+      ALUData.opcodes := OpCodes.ALUOpCodes.ADD
+      ALUData.A := PCData.address.asBits
+      ALUData.B := 4
+      PCData.imm := decoder.io.imm
+      PCData.op := OpCodes.PCOpCodes.ADD_OFFSET
     }
     default {
 
     }
   }
+
 }
 
 object ControlUnitVerilog {

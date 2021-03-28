@@ -35,6 +35,15 @@ trait Instruction {
     }
     result.toString
   }
+
+  def backward(idx: Int, str: String): String = {
+    val s = str(str.length - idx - 1)
+    s.toString
+  }
+
+  def backward(up: Int, down: Int, str: String): String = {
+    str.substring(str.length - up - 1, str.length - down)
+  }
 }
 
 class RInstruction(val rd: Int, val rs1: Int, val rs2: Int, val opcode: Int) extends Instruction {
@@ -98,16 +107,24 @@ class BInstruction(val rs1: Int, val rs2: Int, val imm: Int, val opcode: Int) ex
       backward(11, immString) + toBinary(0x18, 5) + "11"
   }
 
-  def backward(idx: Int, str: String): String = {
-    val s = str(12 - idx)
-    s.toString
+  override def toString: String = {
+    "%s %d, %d, %d".format(name, rs2, rs1, imm)
   }
+}
 
-  def backward(up: Int, down: Int, str: String): String = {
-    str.substring(12 - up, 13 - down)
+class JInstruction(val rd: Int, val imm: Int) extends Instruction {
+  override def instructionFormat(): Int = InstructionFormat.JFormat
+
+  name = "jal"
+
+  override def toBinString: String = {
+    val immString = toBinary(imm, len = 21)
+    backward(idx = 20, immString) + backward(10, 1, immString) +
+      backward(11, immString) + backward(19, 12, immString) +
+      toBinary(rd, 5) + toBinary(0x1b, 5) + "11"
   }
 
   override def toString: String = {
-    "%s %d, %d, %d".format(name, rs2, rs1, imm)
+    "jal %d, %d".format(rd, imm)
   }
 }

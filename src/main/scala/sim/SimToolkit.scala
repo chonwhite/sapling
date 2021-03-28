@@ -29,7 +29,7 @@ object SimToolkit {
     if (binString.length < 32 || binString.charAt(0) == '0') {
       return Integer.parseInt(binString, 2)
     }
-    val invertedInt = binString.map(c => if(c == '0') '1' else '0')
+    val invertedInt = binString.map(c => if (c == '0') '1' else '0')
     var decimalValue = Integer.parseInt(invertedInt, 2)
     decimalValue = (decimalValue + 1) * -1
     decimalValue

@@ -3,6 +3,7 @@ package core
 import scala.collection.immutable.HashMap
 
 object OpCodes {
+
   object InstructionFormat {
     val RFormat = 0
     val IFormat = 1
@@ -27,19 +28,19 @@ object OpCodes {
     val AND = 7 // AND : rs1 & rs2
 
     val codeNameMap = HashMap(
-      ADD->"ADD",
-      SUB->"SUB",
-      SLL->"SLL",
-      SLT->"SLT",
-      SLTU->"SLTU",
-      XOR->"XOR",
-      SRL->"SRL",
-      SRA->"SRA",
-      OR->"OR",
-      AND->"AND"
+      ADD -> "ADD",
+      SUB -> "SUB",
+      SLL -> "SLL",
+      SLT -> "SLT",
+      SLTU -> "SLTU",
+      XOR -> "XOR",
+      SRL -> "SRL",
+      SRA -> "SRA",
+      OR -> "OR",
+      AND -> "AND"
     )
 
-    def getName(code: Int): String ={
+    def getName(code: Int): String = {
       codeNameMap(code)
     }
   }
@@ -48,7 +49,7 @@ object OpCodes {
     val LOAD_BYTE = 0
     val LOAD_HALF = 1
     val LOAD_WORD = 2
-    val LUI = 3
+
 
   }
 
@@ -58,6 +59,7 @@ object OpCodes {
     val STORE_WORD = 2
   }
 
+  val LUI = 3
   val AUIPC = 4
 
   object BranchOpCodes {
@@ -74,6 +76,7 @@ object OpCodes {
     val ADD_OFFSET = 1
     val SET = 2
   }
+
 }
 
 

@@ -9,7 +9,7 @@ object RV32I {
   val registerNames = HashMap(
     "zero" -> 0, "ra" -> 1, "sp" -> 2, "gp" -> 3,
     "gp" -> 4, "t0" -> 5, "t1" -> 6, "t2" -> 7,
-    "s0" -> 8, "fp" -> 8, "s0" -> 9,
+    "s0" -> 8, "fp" -> 8, "s0" -> 8, "s1" -> 9,
     "a0" -> 10, "a1" -> 11, "a2" -> 12, "a3" -> 13,
     "a4" -> 14, "a5" -> 15, "a6" -> 16, "a7" -> 17,
     "s2" -> 18, "s3" -> 19, "s4" -> 20, "s5" -> 21,
@@ -66,6 +66,10 @@ object RV32I {
     BNameToOp.keySet.contains(name)
   }
 
+  def isJFormat(name: String): Boolean = {
+    name == "jal"
+  }
+
   def IInstruction(name: String, args: Int*): IInstruction = {
     val inst = new IInstruction(args(0), args(1), args(2), INameToALUOp(name))
     inst.name = name
@@ -75,6 +79,11 @@ object RV32I {
   def BInstruction(name: String, args: Int*): BInstruction = {
     val inst = new BInstruction(args(0), args(1), args(2), BNameToOp(name))
     inst.name = name
+    inst
+  }
+
+  def JInstruction(name: String, args: Int*): JInstruction = {
+    val inst = new JInstruction(args(0), args(1))
     inst
   }
 
@@ -161,6 +170,7 @@ object RV32I {
   }
 
   class Opcodes(val name: String, val op: Int)
+
 }
 
 

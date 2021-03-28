@@ -11,6 +11,12 @@ class ALUSim extends ALU {
   var A = BigInt(0.toBinaryString, 2)
   var B = BigInt(0.toBinaryString, 2)
 
+  def add(a: Int, b: Int): Int = {
+    io.s1 #= a
+    io.s2 #= b
+    io.res.toInt
+  }
+
   def simOp(op: Int): Unit = {
     val a = Random.nextInt()
     var b = Random.nextInt()
@@ -29,6 +35,11 @@ class ALUSim extends ALU {
     println(eval(op).toInt)
 
     assert(io.res.toBigInt.toInt == eval(op).toInt)
+    assert(io.status.negative.toBoolean == negative(op))
+  }
+
+  def negative(op: Int): Boolean = {
+    eval(op).toInt < 0
   }
 
   def eval(op: Int): Long = {
@@ -36,7 +47,7 @@ class ALUSim extends ALU {
     op match {
       case ALUOpCodes.ADD => result = A.toInt + B.toInt
       case ALUOpCodes.SUB => result = A.toInt - B.toInt
-      case ALUOpCodes.SLL => result = A.toInt << B.toInt
+      case ALUOpCodes.SLL => result = A.toLong << B.toInt
       case ALUOpCodes.SLT =>
         if (A.toInt < B.toInt) {
           result = 1

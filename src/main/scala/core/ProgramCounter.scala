@@ -6,9 +6,10 @@ import spinal.lib.master
 
 class ProgramCounter extends Component {
   val io = new Bundle {
-    val op = in UInt(width = 2 bits)
-    val imm = in Bits(width = 32 bits)
-    val address = master Flow(UInt(width = 32 bits))
+    val op = in UInt (width = 2 bits)
+    val imm = in Bits (width = 32 bits)
+    val address = master Flow (UInt(width = 32 bits))
+    val pc = out UInt (width = 32 bits)
   }
 
   val four = SInt(width = 32 bits)
@@ -16,6 +17,7 @@ class ProgramCounter extends Component {
   val immSigned = SInt(io.imm.getBitsWidth bits)
   immSigned := io.imm.asSInt
   val storedAddress = Reg(SInt(width = 32 bits)) init 0 //TODO
+  io.pc := storedAddress.asUInt.resize(32 bits)
   switch(io.op) {
     is(PCOpCodes.INCREMENT) {
       storedAddress := storedAddress + four

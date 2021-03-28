@@ -2,11 +2,11 @@
 import sim.ALUSim
 import sim.SimToolkit._
 
-class ALUTest extends BaseTest [ALUSim]{
+class ALUTest extends BaseTest[ALUSim] {
   behavior of "ALU"
 
   def sim_op(op: Int) {
-    simulator.doSim{ dut =>
+    simulator.doSim { dut =>
       for (_ <- 0 to 5) {
         dut.simOp(op)
       }
@@ -20,5 +20,7 @@ class ALUTest extends BaseTest [ALUSim]{
     }
   }
 
-  override def dut() : ALUSim = new ALUSim
+  override def withWave: Boolean = true
+
+  override def dut(): ALUSim = new ALUSim
 }

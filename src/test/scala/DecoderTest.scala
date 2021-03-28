@@ -27,7 +27,7 @@ class DecoderTest extends BaseTest[DecoderSim] {
   it must "decode assembly files" in {
     simulator.doSim { _ =>
       val assembler = new Assembler()
-      val instructions = assembler.assembleFile("test/imm.s")
+      val instructions = assembler.assembleFile("test/jump.s")
       for (instruction <- instructions) {
         simulator.dut.simInstruction(instruction)
       }
@@ -42,5 +42,8 @@ class DecoderTest extends BaseTest[DecoderSim] {
     }
     println(s"$GREEN$BOLD ${testName.toUpperCase} Passed$RESET")
   }
+
   override def dut(): DecoderSim = new DecoderSim
+
+  override def withWave = true
 }

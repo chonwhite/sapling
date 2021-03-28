@@ -3,7 +3,7 @@ import spinal.core.sim.SimClockDomainPimper
 
 import scala.util.Random
 
-class RegisterFileTest extends BaseTest [RegisterFileSim] {
+class RegisterFileTest extends BaseTest[RegisterFileSim] {
   behavior of "RegisterFile"
 
   it should "sync with RegFile" in {
@@ -19,9 +19,10 @@ class RegisterFileTest extends BaseTest [RegisterFileSim] {
         dut.clockDomain.waitSampling()
         dut.regFile.tick()
         dut.regFile.checkMatch()
-        assert(dut.regFile.read(rd) == rdData.toLong )
+        assert(dut.regFile.read(rd) == rdData.toLong)
       }
     }
   }
-  override def dut() : RegisterFileSim  = new RegisterFileSim
+
+  override def dut(): RegisterFileSim = new RegisterFileSim
 }
