@@ -8,7 +8,7 @@ import scala.io.Source
 
 class Assembler {
 
-  def getLabel(line: String): String = {
+  def getLabel(line : String): String ={
     val labelIndex = line.indexOf(":")
     if (labelIndex > 0) {
       return line.substring(0, labelIndex)
@@ -49,7 +49,7 @@ class Assembler {
     instructions.toArray
   }
 
-  def parseLine(l: String, index: Int, indexMap: mutable.HashMap[String, Int]): Instruction = {
+  def parseLine(l: String, index : Int, indexMap : mutable.HashMap[String, Int]): Instruction = {
     var line = l
     val commentIndex = line.indexOf("#")
     println(commentIndex)
@@ -87,6 +87,20 @@ class Assembler {
       intArgs += (labelIndex - index) * 4
       return JInstruction(name, intArgs: _*)
     }
+    if (RV32I.isSFormat(name)) {
+
+      val remain = tokens(1).trim
+      val bracketIndex = remain.indexOf("(")
+      val imm = remain.substring(0, bracketIndex).toInt
+      val rs1 = remain.substring(bracketIndex + 1, remain.length - 1)
+      print(imm)
+      print(rs1)
+
+      intArgs += RV32I.registerNames(rs1)
+      intArgs += RV32I.registerNames(tokens(0).trim)
+      intArgs += imm
+      return SInstruction(name, intArgs: _*);
+    }
     null
   }
 }
@@ -99,7 +113,7 @@ object AssemblerTest {
     for (inst <- instructions) {
       println(inst)
       println(inst.toBinString)
-      //      println(inst.toBigInt)
+//      println(inst.toBigInt)
     }
   }
 }

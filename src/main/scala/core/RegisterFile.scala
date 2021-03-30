@@ -3,15 +3,15 @@ package core
 import spinal.core._
 import spinal.lib.slave
 
-class RegisterFile(simSignal: Boolean = false) extends Component {
+class RegisterFile(simSignal : Boolean = false) extends Component {
   val io = new Bundle {
-    val read1 = slave Flow (UInt(width = 5 bits))
-    val read2 = slave Flow (UInt(width = 5 bits))
-    val read1_data = out Bits (width = 32 bits)
-    val read2_data = out Bits (width = 32 bits)
+    val read1 = slave Flow(UInt(width = 5 bits))
+    val read2 = slave Flow(UInt(width = 5 bits))
+    val read1_data = out Bits(width = 32 bits)
+    val read2_data = out Bits(width = 32 bits)
 
-    val write = slave Flow (UInt(width = 5 bits))
-    val write_data = in Bits (width = 32 bits)
+    val write = slave Flow(UInt(width = 5 bits))
+    val write_data = in Bits(width = 32 bits)
   }
   io.read1_data := 0
   io.read2_data := 0
@@ -22,9 +22,7 @@ class RegisterFile(simSignal: Boolean = false) extends Component {
     io.write_data := 0
   }
 
-  var registers = Array.fill(32) {
-    Reg(Bits(width = 32 bits)) init 0
-  }
+  var registers = Array.fill(32){ Reg(Bits(width = 32 bits)) init 0 }
 
   when(io.read1.valid) {
     readReg(io.read1.payload, io.read1_data)
@@ -44,7 +42,7 @@ class RegisterFile(simSignal: Boolean = false) extends Component {
     }
   }
 
-  def readReg(index: UInt, dest: Bits): Unit = {
+  def readReg(index : UInt, dest : Bits): Unit = {
     switch(index) {
       for (index <- 1 to 31) {
         is(index) {

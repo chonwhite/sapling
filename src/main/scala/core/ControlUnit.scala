@@ -9,6 +9,11 @@ case class DataBlock(width: BitCount) extends Bundle {
 }
 
 class ControlUnit extends Component {
+
+  val io = new Bundle{
+    val bus = new Bus()
+  }
+
   val signedZero = SInt(width = 32 bits)
   signedZero := 0
   val unsignedZero = UInt(width = 32 bits)
@@ -20,6 +25,11 @@ class ControlUnit extends Component {
   val decoder = new Decoder();
   val alu = new ALU()
 
+  io.bus.address.valid := False
+  io.bus.address.payload := 0
+  io.bus.data.valid := False
+  io.bus.data.payload := 0
+
   instructionFetcher.io.address << PC.io.address
   decoder.io.inst << instructionFetcher.io.instruction
   registerFile.io.write_data <> alu.io.res
@@ -28,6 +38,8 @@ class ControlUnit extends Component {
     val op = PC.io.op.clone()
     val imm = PC.io.imm.clone()
     val address = PC.io.pc.clone()
+    address := PC.io.pc
+
 
     op := 0
     imm := 0
@@ -162,6 +174,16 @@ class ControlUnit extends Component {
       PCData.imm := decoder.io.imm
       PCData.op := OpCodes.PCOpCodes.ADD_OFFSET
     }
+    is(OpCodes.InstructionFormat.SFormat) {
+      regFileData.enableResisters(Array[Boolean](true, true, false))
+      io.bus.address.valid := True
+      switch(decoder.io.opcodes) {
+        is (OpCodes.StoreOpcodes.STORE_WORD) {
+          io.bus.address.payload := decoder.io.imm.asUInt
+          io.bus.data.payload := registerFile.io.read2_data
+        }
+      }
+    }
     default {
 
     }
@@ -171,7 +193,7 @@ class ControlUnit extends Component {
 
 object ControlUnitVerilog {
   def main(args: Array[String]) {
-    SpinalVerilog(new ControlUnit)
+    SpinalVerilog(new ControlUnit())
   }
 }
 

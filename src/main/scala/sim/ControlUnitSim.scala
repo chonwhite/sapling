@@ -12,20 +12,20 @@ class ControlUnitSim extends ControlUnit {
   class InstructionValidator {
 
     def compRegisters(): Unit = {
-      //      for (index <- mockCPU.registers.indices) {
-      //        if (mockCPU.registers(index) != registerFile.registers(index).toLong) {
-      //          println(index)
-      //          println(mockCPU.registers(index))
-      //          println(registerFile.registers(index).toLong)
-      //        }
-      //        assert(mockCPU.registers(index) == registerFile.registers(index).toLong)
-      //      }
+//      for (index <- mockCPU.registers.indices) {
+//        if (mockCPU.registers(index) != registerFile.registers(index).toLong) {
+//          println(index)
+//          println(mockCPU.registers(index))
+//          println(registerFile.registers(index).toLong)
+//        }
+//        assert(mockCPU.registers(index) == registerFile.registers(index).toLong)
+//      }
     }
 
-    def validate(instruction: Instruction): Unit = {
+    def validate(instruction : Instruction): Unit = {
       println(instruction)
       compRegisters()
-      //      mockCPU.execInstruction(instruction)
+//      mockCPU.execInstruction(instruction)
     }
   }
 
@@ -37,17 +37,17 @@ class ControlUnitSim extends ControlUnit {
   }
 
   def simFile(path: String): Unit = {
-    clockDomain.forkStimulus(period = 10)
-    val assembler = new Assembler()
-    val instructions = assembler.assembleFile(path)
+      clockDomain.forkStimulus(period = 10)
+      val assembler = new Assembler()
+      val instructions = assembler.assembleFile(path)
 
-    for (index <- instructions.indices) {
-      clockDomain.waitSampling()
-      validator.validate(instructions(index))
-    }
+      for (index <- instructions.indices) {
+        clockDomain.waitSampling()
+        validator.validate(instructions(index))
+      }
   }
 
-  def simCycles(cycles: Int): Unit = {
+  def simCycles(cycles : Int) : Unit = {
     clockDomain.forkStimulus(period = 10)
 
     for (index <- 0 until cycles) {

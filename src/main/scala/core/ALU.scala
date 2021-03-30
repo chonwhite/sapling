@@ -5,10 +5,10 @@ import spinal.core._
 
 class ALU extends Component {
   val io = new Bundle {
-    val op = in UInt (5 bits)
-    val s1 = in Bits (32 bits)
-    val s2 = in Bits (32 bits)
-    val res = out Bits (32 bits)
+    val op = in UInt(5 bits)
+    val s1 = in Bits(32 bits)
+    val s2 = in Bits(32 bits)
+    val res = out Bits(32 bits)
     val status = new Bundle {
       val negative = out Bool()
       val zero = out Bool()
@@ -46,14 +46,14 @@ class ALU extends Component {
     is(SLT) {
       when(sop1 < sop2) {
         signed_value := 1
-      } otherwise {
+      }otherwise{
         signed_value := 0
       }
     }
     is(SLTU) {
       when(op1 < op2) {
         signed_value := 1
-      } otherwise {
+      }otherwise{
         signed_value := 0
       }
     }

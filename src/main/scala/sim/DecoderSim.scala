@@ -43,7 +43,7 @@ class DecoderSim extends Decoder {
         val immValue = bits32ToInt(io.imm.toLong)
         assert(immValue == inst.asInstanceOf[IInstruction].imm)
       case InstructionFormat.JFormat =>
-        //        assert(io.opcodes.toInt == inst.asInstanceOf[JInstruction].opcode)
+//        assert(io.opcodes.toInt == inst.asInstanceOf[JInstruction].opcode)
         assert(io.rd.toInt == inst.asInstanceOf[JInstruction].rd)
         val immValue = bits32ToInt(io.imm.toLong)
         assert(immValue == inst.asInstanceOf[JInstruction].imm)

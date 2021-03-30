@@ -8,8 +8,8 @@ import scala.collection.mutable.ArrayBuffer
 
 class InstructionFetcher() extends Component {
   val io = new Bundle {
-    val address = slave Flow (UInt(width = 32 bits))
-    val instruction = master Flow (Bits(width = 32 bits))
+    val address = slave Flow(UInt(width = 32 bits))
+    val instruction = master Flow(Bits(width = 32 bits))
   }
 
   val assembler = new Assembler()

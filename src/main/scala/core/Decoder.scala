@@ -4,16 +4,16 @@ import core.OpCodes._
 import spinal.core._
 import spinal.lib.slave
 
-class Decoder extends Component {
+class Decoder extends Component{
 
   val io = new Bundle {
-    val inst = slave Flow (Bits(width = 32 bits))
-    val opcodes = out UInt (width = 5 bits)
-    val format = out UInt (width = 3 bits)
-    val rd = out UInt (width = 5 bits)
-    val rs1 = out UInt (width = 5 bits)
-    val rs2 = out UInt (width = 5 bits)
-    val imm = out Bits (width = 32 bits)
+    val inst = slave Flow(Bits(width = 32 bits))
+    val opcodes = out UInt(width = 5 bits)
+    val format = out UInt(width = 3 bits)
+    val rd = out UInt(width = 5 bits)
+    val rs1 = out UInt(width = 5 bits)
+    val rs2 = out UInt(width = 5 bits)
+    val imm = out Bits(width = 32 bits)
   }
 
   def setDefaultValues(): Unit = {
@@ -56,7 +56,7 @@ class Decoder extends Component {
       mapALUCode(fields.function3, fields.function7Significant, io.opcodes, isRFormat = false)
       when(fields.function3 === 5 || fields.function3 === 1) {
         imm := shiftAmount.resize(12)
-      } otherwise {
+      }otherwise {
         imm := io.inst.payload(31 downto 20).asSInt
       }
       io.imm := immSignExtended.asBits
@@ -78,19 +78,19 @@ class Decoder extends Component {
       io.format := InstructionFormat.ILoadFormat
       io.opcodes := fields.function3.resize(io.opcodes.getWidth)
       switch(fields.function3) {
-        is(0) { //load byte
+        is(0) {//load byte
           io.imm := byteSignExtended.asBits //TODO
         }
-        is(1) { //lh
+        is(1) {//lh
           io.imm := immSignedExtended.asBits //TODO
         }
-        is(2) { //lw
+        is(2) {//lw
           io.imm := immSignedExtended.asBits
         }
-        is(4) { //lbu
+        is(4) {//lbu
           io.imm := byteZeroExtended.asBits
         }
-        is(5) { //lhu
+        is(5) {//lhu
           io.imm := immZeroExtended.asBits
         }
       }
@@ -127,20 +127,20 @@ class Decoder extends Component {
     val isLUIInstruction = fields.opcode_6_2 === U(0x0D)
     val isAUIPCInstruction = fields.opcode_6_2 === U(0x05)
     val imm = io.inst.payload(31 downto 12)
-    //    io.rs1 := 0
+//    io.rs1 := 0
     when(isLUIInstruction) {
       io.format := InstructionFormat.UFormat
       io.opcodes := OpCodes.LUI
       io.imm := imm ## B(0, 12 bits)
     }
-    when(isAUIPCInstruction) {
+    when(isAUIPCInstruction){
       io.format := InstructionFormat.UFormat
       io.opcodes := OpCodes.AUIPC
       io.imm := imm ## B(0, 12 bits)
     }
   }
 
-  val SDecoder = new Area {
+  val SDecoder = new Area{
     val isSFormat = fields.opcode_6_2 === U(0x08)
     val imm = io.inst.payload(31 downto 25) ## io.inst.payload(11 downto 7)
     val immSigned = imm.asSInt
@@ -152,13 +152,13 @@ class Decoder extends Component {
     }
   }
 
-  def mapALUCode(function: UInt, function7: Bool, code: UInt, isRFormat: Boolean): Unit = {
-    switch(function) {
+  def mapALUCode(function : UInt, function7 : Bool, code: UInt, isRFormat : Boolean): Unit = {
+    switch(function){
       is(0) {
         if (isRFormat) {
           when(function7 === False) {
             code := ALUOpCodes.ADD
-          } otherwise {
+          }otherwise {
             code := ALUOpCodes.SUB
           }
         } else {
@@ -168,7 +168,7 @@ class Decoder extends Component {
       is(5) {
         when(function7 === False) {
           code := ALUOpCodes.SRL
-        } otherwise {
+        }otherwise {
           code := ALUOpCodes.SRA
         }
       }

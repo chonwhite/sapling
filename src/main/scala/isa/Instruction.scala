@@ -112,12 +112,12 @@ class BInstruction(val rs1: Int, val rs2: Int, val imm: Int, val opcode: Int) ex
   }
 }
 
-class JInstruction(val rd: Int, val imm: Int) extends Instruction {
-  override def instructionFormat(): Int = InstructionFormat.JFormat
+class JInstruction(val rd: Int, val imm : Int) extends Instruction {
+  override def instructionFormat() : Int = InstructionFormat.JFormat
 
   name = "jal"
 
-  override def toBinString: String = {
+  override def toBinString : String = {
     val immString = toBinary(imm, len = 21)
     backward(idx = 20, immString) + backward(10, 1, immString) +
       backward(11, immString) + backward(19, 12, immString) +
@@ -126,5 +126,20 @@ class JInstruction(val rd: Int, val imm: Int) extends Instruction {
 
   override def toString: String = {
     "jal %d, %d".format(rd, imm)
+  }
+}
+
+class SInstruction(val rs1: Int, val rs2: Int, val imm: Int, val opcode: Int) extends Instruction {
+  override def instructionFormat() : Int = InstructionFormat.SFormat
+
+  override def toBinString : String = {
+    val immString = toBinary(imm, len = 12)
+    val function3 = opcode;
+    backward(11, 5, immString) + toBinary(rs2, 5) + toBinary(rs1, 5) +
+      toBinary(function3, 3) + backward(4, 0, immString) + toBinary(0x08, 5) + "11"
+  }
+
+  override def toString = {
+    "%s %d %d(%d)".format(name, rs2, imm, rs1)
   }
 }

@@ -11,7 +11,7 @@ class ALUSim extends ALU {
   var A = BigInt(0.toBinaryString, 2)
   var B = BigInt(0.toBinaryString, 2)
 
-  def add(a: Int, b: Int): Int = {
+  def add(a : Int, b : Int) : Int = {
     io.s1 #= a
     io.s2 #= b
     io.res.toInt
@@ -38,7 +38,7 @@ class ALUSim extends ALU {
     assert(io.status.negative.toBoolean == negative(op))
   }
 
-  def negative(op: Int): Boolean = {
+  def negative(op : Int) : Boolean = {
     eval(op).toInt < 0
   }
 

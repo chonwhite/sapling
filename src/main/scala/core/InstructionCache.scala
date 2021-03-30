@@ -7,7 +7,7 @@ case class CacheConfig(
                         width: BitCount,
                         depth: Int,
                         rows: Int,
-                        content: Array[BigInt]
+                        content : Array[BigInt]
                       ) {
   def lineWidth: BitCount = {
     width.value * depth bits
@@ -49,9 +49,9 @@ object CacheVerilog {
       rows = 4,
       content = null
     );
-    //    val dataBus = new NativeBus()
+//    val dataBus = new NativeBus()
     SpinalConfig(device = Device.XILINX)
-      .generateVerilog(new InstructionCache(cacheConfig))
+          .generateVerilog(new InstructionCache(cacheConfig))
   }
 }
 

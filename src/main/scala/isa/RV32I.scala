@@ -52,6 +52,12 @@ object RV32I {
     "bgeu" -> OpCodes.BranchOpCodes.BGEU
   )
 
+  val SNameToOp = HashMap(
+    "sb" -> OpCodes.StoreOpcodes.STORE_BYTE,
+    "sh" -> OpCodes.StoreOpcodes.STORE_HALF,
+    "sw" -> OpCodes.StoreOpcodes.STORE_WORD
+  )
+
   val IOpToName = Map() ++ INameToALUOp.map(_.swap)
 
   def isRFormat(name: String): Boolean = {
@@ -70,6 +76,10 @@ object RV32I {
     name == "jal"
   }
 
+  def isSFormat(name: String): Boolean = {
+    SNameToOp.keySet.contains(name)
+  }
+
   def IInstruction(name: String, args: Int*): IInstruction = {
     val inst = new IInstruction(args(0), args(1), args(2), INameToALUOp(name))
     inst.name = name
@@ -82,8 +92,15 @@ object RV32I {
     inst
   }
 
-  def JInstruction(name: String, args: Int*): JInstruction = {
+  def JInstruction(name: String, args: Int*) :JInstruction = {
     val inst = new JInstruction(args(0), args(1))
+    inst.name = name
+    inst
+  }
+
+  def SInstruction(name : String, args: Int*) : SInstruction = {
+    val inst = new SInstruction(args(0), args(1), args(2), SNameToOp(name))
+    inst.name = name
     inst
   }
 
@@ -170,7 +187,6 @@ object RV32I {
   }
 
   class Opcodes(val name: String, val op: Int)
-
 }
 
 
