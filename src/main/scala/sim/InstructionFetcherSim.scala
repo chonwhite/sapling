@@ -5,7 +5,7 @@ import isa.Instruction
 import spinal.core.sim._
 
 class InstructionFetcherSim extends InstructionFetcher {
-  instructionCache.mem.simPublic()
+//  instructionCache.mem.simPublic()
 
   def fillCache(instructions: Array[Instruction]): Unit = {
     for (index <- instructions.indices) {

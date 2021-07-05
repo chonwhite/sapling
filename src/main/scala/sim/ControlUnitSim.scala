@@ -31,7 +31,7 @@ class ControlUnitSim extends ControlUnit {
 
   val validator = new InstructionValidator
 
-  instructionFetcher.instructionCache.mem.simPublic()
+//  instructionFetcher.instructionCache.mem.simPublic()
   for (register <- registerFile.registers) {
     register.simPublic()
   }

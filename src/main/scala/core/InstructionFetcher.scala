@@ -28,7 +28,8 @@ class InstructionFetcher() extends Component {
     content = codes.toArray
   )
 
-  val instructionCache = new InstructionCache(cacheConfig) //TODO
+//  val instructionCache = new InstructionCache(cacheConfig) //TODO
+  val instructionCache = new BRamCache(cacheConfig)
   instructionCache.io.address <> io.address
   io.instruction <> instructionCache.io.data
 }

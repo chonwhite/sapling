@@ -20,6 +20,16 @@ case class Tag() extends Bundle {
   val tag = UInt(width = 2 bits)
 }
 
+class BRamCache(config: CacheConfig) extends BlackBox {
+  val io = new Bundle {
+    val clk = in Bool()
+    val address = slave Flow UInt(width = 32 bits)
+    val data = master Flow Bits(width = 32 bits)
+  }
+  noIoPrefix()
+  addRTLPath("AXI4MemoryBus.v")
+}
+
 class InstructionCache(config: CacheConfig) extends Component {
   val io = new Bundle {
     val address = slave Flow UInt(width = 32 bits)
@@ -51,7 +61,7 @@ object CacheVerilog {
     );
 //    val dataBus = new NativeBus()
     SpinalConfig(device = Device.XILINX)
-          .generateVerilog(new InstructionCache(cacheConfig))
+          .generateVerilog(new BRamCache(cacheConfig))
   }
 }
 
