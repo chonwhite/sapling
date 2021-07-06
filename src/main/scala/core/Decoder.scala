@@ -4,6 +4,8 @@ import core.OpCodes._
 import spinal.core._
 import spinal.lib.slave
 
+import scala.language.postfixOps
+
 class Decoder extends Component{
 
   val io = new Bundle {

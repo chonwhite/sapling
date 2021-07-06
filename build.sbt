@@ -15,7 +15,5 @@ libraryDependencies ++= Seq(
   compilerPlugin("com.github.spinalhdl" % "spinalhdl-idsl-plugin_2.11" % spinalVersion)
 )
 
-
-
 fork := true
 EclipseKeys.withSource := true

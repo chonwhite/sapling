@@ -6,14 +6,12 @@ import spinal.core._
 
 class CacheTest extends Component{
   val io = new Bundle {
-//    val clk = in Bool()
-//    val reset = in Bool()
   }
+
+  noIoPrefix()
 
   val clk = ClockDomain.current.readClockWire;
   val reset = ClockDomain.current.readResetWire
-
-  noIoPrefix()
 
   val cache = new BRamCache(config)
   val valid = reset

@@ -3,6 +3,8 @@ package core
 import core.OpCodes.ALUOpCodes._
 import spinal.core._
 
+import scala.language.postfixOps
+
 class ALU extends Component {
   val io = new Bundle {
     val op = in UInt(5 bits)

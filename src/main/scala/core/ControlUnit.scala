@@ -2,6 +2,8 @@ package core
 
 import spinal.core._
 
+import scala.language.postfixOps
+
 case class DataBlock(width: BitCount) extends Bundle {
   val valid = Bool
   val payload = UInt(width = width)
