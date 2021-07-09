@@ -6,31 +6,34 @@ import spinal.core._
 import scala.language.postfixOps
 
 class ALU extends Component {
-  val io = new Bundle {
-    val op = in UInt(5 bits)
-    val s1 = in Bits(32 bits)
-    val s2 = in Bits(32 bits)
-    val res = out Bits(32 bits)
-    val status = new Bundle {
-      val negative = out Bool()
-      val zero = out Bool()
+
+  class ALUBundle extends Bundle{
+    class StatusBundle extends Bundle {
+      val negative: Bool = out Bool()
+      val zero: Bool = out Bool()
     }
+    val op: UInt = in UInt(5 bits)
+    val s1: Bits = in Bits(32 bits)
+    val s2: Bits = in Bits(32 bits)
+    val res: Bits = out Bits(32 bits)
+    val status = new StatusBundle()
   }
+  val io = new ALUBundle()
 
-  val s1 = io.s1.asSInt
-  val s2 = io.s2.asSInt
+  val s1: SInt = io.s1.asSInt
+  val s2: SInt = io.s2.asSInt
 
-  val u1 = io.s1.asUInt
-  val u2 = io.s2.asUInt
+  val u1: UInt = io.s1.asUInt
+  val u2: UInt = io.s2.asUInt
 
-  val signed_value = SInt(33 bits)
-  val unsigned_value = UInt(33 bits)
-  val bits_value = signed_value.asBits
-  val zero = S(0, 33 bits)
-  val sop1 = s1.resize(width = 33 bits)
-  val sop2 = s2.resize(width = 33 bits)
-  val op1 = u1.resize(width = 33 bits)
-  val op2 = u2.resize(width = 33 bits)
+  val signed_value: SInt = SInt(33 bits)
+  val unsigned_value: UInt = UInt(33 bits)
+  val bits_value: Bits = signed_value.asBits
+  val zero: SInt = S(0, 33 bits)
+  val sop1: SInt = s1.resize(width = 33 bits)
+  val sop2: SInt = s2.resize(width = 33 bits)
+  val op1: UInt = u1.resize(width = 33 bits)
+  val op2: UInt = u2.resize(width = 33 bits)
 
   unsigned_value := 0
 

@@ -2,21 +2,23 @@ package core
 
 import core.OpCodes.PCOpCodes
 import spinal.core._
-import spinal.lib.master
+import spinal.lib._
 
 class ProgramCounter extends Component {
-  val io = new Bundle {
-    val op = in UInt(width = 2 bits)
-    val imm = in Bits(width = 32 bits)
-    val address = master Flow(UInt(width = 32 bits))
-    val pc = out UInt(width = 32 bits)
-  }
 
-  val four = SInt(width = 32 bits)
+  class PCBundle() extends Bundle {
+    val op: UInt = in UInt(width = 2 bits)
+    val imm: Bits = in Bits(width = 32 bits)
+    val address: Flow[UInt] = master Flow UInt(width = 32 bits)
+    val pc: UInt = out UInt(width = 32 bits)
+  }
+  val io: PCBundle = new PCBundle()
+
+  val four: SInt = SInt(width = 32 bits)
   four := 4
-  val immSigned = SInt(io.imm.getBitsWidth bits)
+  val immSigned: SInt = SInt(io.imm.getBitsWidth bits)
   immSigned := io.imm.asSInt
-  val storedAddress = Reg(SInt(width = 32 bits)) init 0 //TODO
+  val storedAddress: SInt = Reg(SInt(width = 32 bits)) init 0 //TODO
   io.pc := storedAddress.asUInt.resize(32 bits)
   switch(io.op) {
     is(PCOpCodes.INCREMENT) {

@@ -7,13 +7,13 @@ import spinal.core._
 import scala.language.postfixOps
 
 class DecoderTest extends Component{
-  val io = new Bundle {}
+  val io: Bundle = new Bundle {}
   noIoPrefix()
 
-  val clk = ClockDomain.current.readClockWire
+  val clk: Bool = ClockDomain.current.readClockWire
 
   val PC = new MockPC()
-  val config = CacheConfig(width = 32 bits,
+  val config: CacheConfig = CacheConfig(width = 32 bits,
     depth = 32, rows = 2, content = null)
   val cache = new BRamCache(config)
   val decoder = new Decoder()
