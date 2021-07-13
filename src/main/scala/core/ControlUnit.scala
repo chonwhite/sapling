@@ -10,187 +10,125 @@ case class DataBlock(width: BitCount) extends Bundle {
   valid := False
 }
 
+class ControlUnitBundle extends Bundle {
+  val bus = new Bus()
+}
+
 class ControlUnit extends Component {
-
-  val io = new Bundle{
-    val bus = new Bus()
-  }
-
-  val signedZero = SInt(width = 32 bits)
-  signedZero := 0
-  val unsignedZero = UInt(width = 32 bits)
-  unsignedZero := 0
+  val io = new ControlUnitBundle()
 
   val PC = new ProgramCounter()
   val instructionFetcher = new InstructionFetcher()
   val registerFile = new RegisterFile()
-  val decoder = new Decoder();
+  val decoder = new Decoder()
   val alu = new ALU()
 
-  io.bus.address.valid := False
-  io.bus.address.payload := 0
-  io.bus.data.valid := False
-  io.bus.data.payload := 0
+  val data = new RegData()
+  val branch = new Branch()
+  val codeGenerator = new MicroCodeGenerator(decoder)
 
+  setIoBusDefaultValue()
+  // PC -> instructionFetcher
   instructionFetcher.io.address << PC.io.address
+  // instructionFetcher -> decoder
   decoder.io.inst << instructionFetcher.io.instruction
-  registerFile.io.write_data <> alu.io.res
+  // decoder -> registerFile
+  connectDecoderToRegisterFile()
+  // registerFile -> ALU
+  configALUInputMux()
+  alu.io.op <> decoder.io.opcodes
+  alu.io.s1 <> data.aluA
+  alu.io.s2 <> data.aluB
+  // branch
+  // alu -> mem
+  // alu -> registerFile
+  registerFile.io.write.valid <> codeGenerator.regWriteEnable
+  registerFile.io.write.payload <> decoder.io.rd
+  registerFile.io.write_data <> data.writeData
+  // branch & alu -> pc
+  PC.io.op <> data.pcOP
+  PC.io.imm <> data.pcIMM
 
-  val PCData = new Area {
-    val op = PC.io.op.clone()
-    val imm = PC.io.imm.clone()
-    val address = PC.io.pc.clone()
-    address := PC.io.pc
+  val debugger = new CUDebugger(this)
 
-
-    op := 0
-    imm := 0
-
-    PC.io.op <> op
-    PC.io.imm <> imm
-  }
-
-  val ALUData = new Area {
-    val opcodes = UInt(width = alu.io.op.getWidth bits)
-    val A = Bits(width = 32 bits)
-    val B = Bits(width = 32 bits)
-
-    val zero = alu.io.status.zero
-    val negative = alu.io.status.negative
-
-    opcodes := OpCodes.ALUOpCodes.ADD // noop
-    B := 0
-
-    A <> registerFile.io.read1_data
-    when(decoder.io.format === OpCodes.InstructionFormat.UFormat) {
-      A := PC.io.pc.asBits
+  def configALUInputMux(): Unit = {
+    when(codeGenerator.aluSrc1 === MicroCodes.ALU_SRC_REG){
+      data.aluA := registerFile.io.read1_data
+    } otherwise {
+      data.aluA := PC.io.pc
     }
 
-    alu.io.op <> opcodes
-    alu.io.s1 <> A
-    alu.io.s2 <> B
+    when(codeGenerator.aluSrc2 === MicroCodes.ALU_SRC_REG) {
+      data.aluB := registerFile.io.read2_data
+    } otherwise {
+      data.aluB := decoder.io.imm
+    }
   }
 
-  val Branch = new Area {
+  def setIoBusDefaultValue(): Unit = {
+    io.bus.address.valid := False
+    io.bus.address.payload := 0
+    io.bus.data.valid := False
+    io.bus.data.payload := 0
+  }
+
+  def connectDecoderToRegisterFile(): Unit = {
+    registerFile.io.read1.valid <> data.alwaysValid
+    registerFile.io.read1.payload <> decoder.io.rs1
+    registerFile.io.read2.valid := data.alwaysValid
+    registerFile.io.read2.payload <> decoder.io.rs2
+  }
+
+  class RegData extends Area {
+    val alwaysValid = Bool(true)
+    val writeData = Bits(width = 32 bits) // pc, alu_res, mem_read;
+
+    writeData := 0
+
+    val aluA = Bits(32 bits)
+    val aluB = Bits(32 bits)
+
+    val pcOP = PC.io.op.clone()
+    val pcIMM = PC.io.imm.clone()
+  }
+
+
+  class Branch extends Area {
     val taken = Bool()
-    taken := False
 
     when(taken) {
-      PCData.op := OpCodes.PCOpCodes.ADD_OFFSET
-      PCData.imm := decoder.io.imm
+      data.pcOP := OpCodes.PCOpCodes.ADD_OFFSET
+      data.pcIMM := decoder.io.imm
     } otherwise {
-      PCData.op := OpCodes.PCOpCodes.INCREMENT
-      PCData.imm := 0
+      data.pcOP := OpCodes.PCOpCodes.INCREMENT
+      data.pcIMM := 0
+    }
+
+    switch(decoder.io.opcodes) {
+      is(OpCodes.BranchOpCodes.BEQ) {
+        taken := alu.io.status.zero
+      }
+      is(OpCodes.BranchOpCodes.BNE) {
+        taken := !alu.io.status.zero
+      }
+      is(OpCodes.BranchOpCodes.BLT) {
+        taken := alu.io.status.negative
+      }
+      is(OpCodes.BranchOpCodes.BGE) {
+        taken := !alu.io.status.negative
+      }
+      is(OpCodes.BranchOpCodes.BLTU) {
+        taken := alu.io.status.negative
+      }
+      is(OpCodes.BranchOpCodes.BGEU) {
+        taken := !alu.io.status.negative
+      }
+      default {
+        taken := False
+      }
     }
     //TODO jump
-
   }
-
-  val regFileData = new Area {
-    val reg1 = DataBlock(width = 5 bits)
-    val reg2 = DataBlock(width = 5 bits)
-    val write = DataBlock(width = 5 bits)
-
-    registerFile.io.read1.valid <> reg1.valid
-    registerFile.io.read1.payload <> reg1.payload
-    registerFile.io.read2.valid <> reg2.valid
-    registerFile.io.read2.payload <> reg2.payload
-    registerFile.io.write.valid <> write.valid
-    registerFile.io.write.payload <> write.payload
-
-    reg1.payload <> decoder.io.rs1
-    reg2.payload <> decoder.io.rs2
-    write.payload <> decoder.io.rd
-
-    def enableReg(reg: Bool, enable: Boolean) {
-      if (enable) {
-        reg := True
-      } else {
-        reg := False
-      }
-    }
-
-    def enableResisters(enables: Array[Boolean]): Unit = {
-      enableReg(reg1.valid, enables(0))
-      enableReg(reg2.valid, enables(1))
-      enableReg(write.valid, enables(2))
-    }
-  }
-
-  switch(decoder.io.format) {
-    is(OpCodes.InstructionFormat.RFormat) {
-      regFileData.enableResisters(Array[Boolean](true, true, true))
-      ALUData.opcodes := decoder.io.opcodes
-      ALUData.B := registerFile.io.read2_data
-    }
-    is(OpCodes.InstructionFormat.IFormat) {
-      regFileData.enableResisters(Array[Boolean](true, false, true))
-      ALUData.opcodes := decoder.io.opcodes
-      ALUData.B := decoder.io.imm
-    }
-    is(OpCodes.InstructionFormat.BFormat) {
-      regFileData.enableResisters(Array[Boolean](true, true, false))
-      PCData.imm := decoder.io.imm
-      ALUData.B := registerFile.io.read2_data
-      ALUData.opcodes := OpCodes.ALUOpCodes.SUB
-      //TODO move to ALU?
-
-      switch(decoder.io.opcodes) {
-        is(OpCodes.BranchOpCodes.BEQ) {
-          Branch.taken := ALUData.zero
-        }
-        is(OpCodes.BranchOpCodes.BNE) {
-          Branch.taken := !ALUData.zero
-        }
-        is(OpCodes.BranchOpCodes.BLT) {
-          Branch.taken := ALUData.negative
-        }
-        is(OpCodes.BranchOpCodes.BGE) {
-          Branch.taken := !ALUData.negative
-        }
-        is(OpCodes.BranchOpCodes.BLTU) {
-          Branch.taken := ALUData.negative
-        }
-        is(OpCodes.BranchOpCodes.BGEU) {
-          Branch.taken := !ALUData.negative
-        }
-      }
-    }
-    is(OpCodes.InstructionFormat.UFormat) {
-      regFileData.enableResisters(Array[Boolean](true, false, true))
-      // rs1 should be zero
-      ALUData.opcodes := OpCodes.ALUOpCodes.ADD
-      ALUData.B := decoder.io.imm
-      switch(decoder.io.opcodes) {
-        is(OpCodes.AUIPC) {
-          ALUData.A := PC.io.pc.asBits
-        }
-      }
-    }
-    is(OpCodes.InstructionFormat.JFormat) {
-      regFileData.enableResisters(Array[Boolean](false, false, true))
-
-      ALUData.opcodes := OpCodes.ALUOpCodes.ADD
-      ALUData.A := PCData.address.asBits
-      ALUData.B := 4
-      PCData.imm := decoder.io.imm
-      PCData.op := OpCodes.PCOpCodes.ADD_OFFSET
-    }
-    is(OpCodes.InstructionFormat.SFormat) {
-      regFileData.enableResisters(Array[Boolean](true, true, false))
-      io.bus.address.valid := True
-      switch(decoder.io.opcodes) {
-        is (OpCodes.StoreOpcodes.STORE_WORD) {
-          io.bus.address.payload := decoder.io.imm.asUInt
-          io.bus.data.payload := registerFile.io.read2_data
-        }
-      }
-    }
-    default {
-
-    }
-  }
-
 }
 
 object ControlUnitVerilog {

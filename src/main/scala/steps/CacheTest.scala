@@ -22,12 +22,12 @@ class CacheTest extends Component{
   val debugger = new ILA()
 
   address := address + 4
-  debugger.io.clk <> clk
+//  debugger.io.clk <> clk
   cache.io.clk <> clk
   cache.io.address.valid <> valid
   cache.io.address.payload <> address
 
-  debugger.io.data <> cache.io.data
+//  debugger.io.data <> cache.io.data
 }
 
 object CacheTestVerilog {

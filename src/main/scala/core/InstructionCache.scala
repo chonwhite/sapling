@@ -3,6 +3,8 @@ package core
 import spinal.core._
 import spinal.lib._
 
+import scala.language.postfixOps
+
 case class CacheConfig(
                         width: BitCount,
                         depth: Int,

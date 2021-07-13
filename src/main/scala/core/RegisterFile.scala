@@ -3,6 +3,8 @@ package core
 import spinal.core._
 import spinal.lib.{Flow, slave}
 
+import scala.language.postfixOps
+
 class RegisterFile(simSignal : Boolean = false) extends Component {
   class RegisterBundle extends Bundle {
     val read1: Flow[UInt] = slave Flow UInt(width = 5 bits)

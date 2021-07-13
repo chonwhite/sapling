@@ -6,28 +6,30 @@ import spinal.lib.{Flow, slave}
 
 import scala.language.postfixOps
 
+class DecoderBundle extends Bundle{
+  val inst: Flow[Bits] = slave Flow Bits(width = 32 bits)
+  val opcodes: UInt = out UInt(width = 5 bits)
+  val format: UInt = out UInt(width = 3 bits)
+  val rd: UInt = out UInt(width = 5 bits)
+  val rs1: UInt = out UInt(width = 5 bits)
+  val rs2: UInt = out UInt(width = 5 bits)
+  val imm: Bits = out Bits(width = 32 bits)
+}
+
+class DecoderSlaveBundler extends DecoderBundle {
+  opcodes.asInput()
+  format.asInput()
+  rd.asInput()
+  rs1.asInput()
+  rs2.asInput()
+  imm.asInput()
+}
+
 class Decoder extends Component{
-
-  class DecoderBundle extends Bundle{
-    val inst: Flow[Bits] = slave Flow Bits(width = 32 bits)
-    val opcodes: UInt = out UInt(width = 5 bits)
-    val format: UInt = out UInt(width = 3 bits)
-    val rd: UInt = out UInt(width = 5 bits)
-    val rs1: UInt = out UInt(width = 5 bits)
-    val rs2: UInt = out UInt(width = 5 bits)
-    val imm: Bits = out Bits(width = 32 bits)
-  }
   noIoPrefix()
-
   val io = new DecoderBundle()
 
-  def setDefaultValues(): Unit = {
-    io.inst.valid := False
-    io.inst.payload := 0
-  }
-
   private val fields = new Fields()
-
   io.format <> 0
   io.rd <> fields.rd
   io.rs1 <> fields.rs1
@@ -37,7 +39,6 @@ class Decoder extends Component{
 
   val rDecoder = new RDecoder()
   val immDecoder = new ImmDecoder()
-
   val immLoadDecoder = new ImmLoadDecoder()
   val bDecoder = new BDecoder()
   val jDecoder = new JDecoder()
@@ -119,7 +120,8 @@ class Decoder extends Component{
 
   class JDecoder extends Area {
     val isJFormatInstruction: Bool = fields.opcode_6_2 === U(0x1b)
-    val imm: Bits = io.inst.payload(31) ## io.inst.payload(19 downto 12) ## io.inst.payload(20) ## io.inst.payload(30 downto 21) ## False
+    val imm: Bits = io.inst.payload(31) ## io.inst.payload(19 downto 12) ##
+        io.inst.payload(20) ## io.inst.payload(30 downto 21) ## False
     when(isJFormatInstruction) {
       io.format := InstructionFormat.JFormat
       io.imm := imm.resize(32 bits)

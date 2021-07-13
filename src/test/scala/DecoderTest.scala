@@ -27,7 +27,7 @@ class DecoderTest extends BaseTest[DecoderSim] {
   it must "decode assembly files" in {
     simulator.doSim { _ =>
       val assembler = new Assembler()
-      val instructions = assembler.assembleFile("test/jump.s")
+      val instructions = assembler.assembleFile("test/led.S")
       for (instruction <- instructions) {
         simulator.dut.simInstruction(instruction)
       }

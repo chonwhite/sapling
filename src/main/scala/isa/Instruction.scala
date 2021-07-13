@@ -30,14 +30,15 @@ trait Instruction {
     val result = new StringBuilder
     for (i <- len - 1 to 0 by -1) {
       val mask = 1 << i
-      result.append(if ((x & mask) != 0) 1
-      else 0)
+      result.append(if ((x & mask) != 0) 1 else 0)
     }
+//    print(result.toString())
     result.toString
   }
 
   def backward(idx: Int, str: String): String = {
     val s = str(str.length - idx - 1)
+//    print(s)
     s.toString
   }
 
@@ -134,7 +135,7 @@ class SInstruction(val rs1: Int, val rs2: Int, val imm: Int, val opcode: Int) ex
 
   override def toBinString : String = {
     val immString = toBinary(imm, len = 12)
-    val function3 = opcode;
+    val function3 = opcode
     backward(11, 5, immString) + toBinary(rs2, 5) + toBinary(rs1, 5) +
       toBinary(function3, 3) + backward(4, 0, immString) + toBinary(0x08, 5) + "11"
   }

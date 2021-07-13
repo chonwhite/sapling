@@ -1,8 +1,10 @@
 package core
 
 import core.OpCodes.PCOpCodes
-import spinal.core._
+import spinal.core.{Bits, _}
 import spinal.lib._
+
+import scala.language.postfixOps
 
 class ProgramCounter extends Component {
 
@@ -10,7 +12,7 @@ class ProgramCounter extends Component {
     val op: UInt = in UInt(width = 2 bits)
     val imm: Bits = in Bits(width = 32 bits)
     val address: Flow[UInt] = master Flow UInt(width = 32 bits)
-    val pc: UInt = out UInt(width = 32 bits)
+    val pc: Bits = out Bits(width = 32 bits)
   }
   val io: PCBundle = new PCBundle()
 
@@ -19,7 +21,7 @@ class ProgramCounter extends Component {
   val immSigned: SInt = SInt(io.imm.getBitsWidth bits)
   immSigned := io.imm.asSInt
   val storedAddress: SInt = Reg(SInt(width = 32 bits)) init 0 //TODO
-  io.pc := storedAddress.asUInt.resize(32 bits)
+  io.pc := storedAddress.resize(32 bits).asBits
   switch(io.op) {
     is(PCOpCodes.INCREMENT) {
       storedAddress := storedAddress + four
@@ -34,7 +36,6 @@ class ProgramCounter extends Component {
   io.address.payload := storedAddress.asUInt
   io.address.valid := True
 }
-
 
 object ProgramCounterVerilog {
   def main(args: Array[String]) {

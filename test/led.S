@@ -14,5 +14,5 @@ jal zero, set_led
 set_to_one:
 addi a1, zero, 1 #set to one
 set_led:
-sw a1, 10000(zero)
+sw a1, 2045(zero)
 jal zero, loop_start

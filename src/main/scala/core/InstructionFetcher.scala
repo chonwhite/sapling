@@ -5,11 +5,12 @@ import spinal.core._
 import spinal.lib.{master, slave}
 
 import scala.collection.mutable.ArrayBuffer
+import scala.language.postfixOps
 
 class InstructionFetcher() extends Component {
   val io = new Bundle {
-    val address = slave Flow(UInt(width = 32 bits))
-    val instruction = master Flow(Bits(width = 32 bits))
+    val address = slave Flow UInt(width = 32 bits)
+    val instruction = master Flow Bits(width = 32 bits)
   }
 
   val assembler = new Assembler()
@@ -30,6 +31,7 @@ class InstructionFetcher() extends Component {
 
 //  val instructionCache = new InstructionCache(cacheConfig) //TODO
   val instructionCache = new BRamCache(cacheConfig)
+  instructionCache.io.clk <> ClockDomain.current.readClockWire
   instructionCache.io.address <> io.address
   io.instruction <> instructionCache.io.data
 }

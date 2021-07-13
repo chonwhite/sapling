@@ -59,19 +59,20 @@ class Assembler {
     val name = line.split(" ")(0).toLowerCase
     val tokens = line.substring(name.length, line.length).split(",")
 
-    var intArgs = ArrayBuffer[Int]()
-    println(s"name: ${name}")
+    val intArgs = ArrayBuffer[Int]()
+    println(s"name: $name")
     if (RV32I.isRFormat(name)) {
       for (t <- tokens) {
         intArgs += RV32I.registerNames(t.trim)
       }
-      return RInstruction(name, intArgs: _*);
+      return RInstruction(name, intArgs: _*)
     }
     if (RV32I.isIFormat(name)) {
       intArgs += RV32I.registerNames(tokens(0).trim)
       intArgs += RV32I.registerNames(tokens(1).trim)
       intArgs += tokens(2).trim.toInt
-      return IInstruction(name, intArgs: _*);
+      print(intArgs)
+      return IInstruction(name, intArgs: _*)
     }
     if (RV32I.isBFormat(name)) {
       intArgs += RV32I.registerNames(tokens(0).trim)
@@ -79,7 +80,7 @@ class Assembler {
       val labelIndex = indexMap(tokens(2).trim)
       intArgs += (labelIndex - index) * 4
       print(intArgs)
-      return BInstruction(name, intArgs: _*);
+      return BInstruction(name, intArgs: _*)
     }
     if (RV32I.isJFormat(name)) {
       intArgs += RV32I.registerNames(tokens(0).trim)
@@ -99,7 +100,7 @@ class Assembler {
       intArgs += RV32I.registerNames(rs1)
       intArgs += RV32I.registerNames(tokens(0).trim)
       intArgs += imm
-      return SInstruction(name, intArgs: _*);
+      return SInstruction(name, intArgs: _*)
     }
     null
   }
