@@ -12,11 +12,11 @@ class Led extends Component{
   val control = new ControlUnit()
   io.led := led
 
-  when(control.io.bus.address.valid) {
-    when(control.io.bus.address.payload === U(10000)){
-      led := control.io.bus.data.payload(3 downto 0)
-    }
-  }
+//  when(control.io.bus.address.valid) {
+//    when(control.io.bus.address.payload === U(10000)){
+//      led := control.io.bus.data.payload(3 downto 0)
+//    }
+//  }
 
 }
 

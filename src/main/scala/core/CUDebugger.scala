@@ -6,7 +6,7 @@ import spinal.core._
 import scala.language.postfixOps
 
 class CUILABundle extends Bundle {
-  val clk = in Bool()
+  val clk: Bool = in Bool()
   val decoder = new DecoderILABundle()
   val alu = new AluILABundle()
 }
@@ -18,9 +18,8 @@ class CUILA extends BlackBox {
 
 class CUDebugger(cu: ControlUnit) extends Area{
   val debugger = new CUILA()
-  val clk = ClockDomain.current.readClockWire
-  debugger.io.clk <> clk
-  debugger.io.decoder.clk <> clk
+  debugger.io.clk <> ClockDomain.current.readClockWire
+  debugger.io.decoder.clk <> ClockDomain.current.readClockWire
   debugger.io.decoder.inst << cu.decoder.io.inst
   debugger.io.decoder.format <> cu.decoder.io.format
   debugger.io.decoder.opcodes <> cu.decoder.io.opcodes
@@ -29,7 +28,7 @@ class CUDebugger(cu: ControlUnit) extends Area{
   debugger.io.decoder.rs2 <> cu.decoder.io.rs2
   debugger.io.decoder.imm <> cu.decoder.io.imm
 
-  debugger.io.alu.clk <> clk
+  debugger.io.alu.clk <> ClockDomain.current.readClockWire
   debugger.io.alu.op <> cu.decoder.io.opcodes
   debugger.io.alu.s1 <> cu.data.aluA
   debugger.io.alu.s2 <> cu.data.aluB

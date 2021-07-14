@@ -4,17 +4,12 @@ import spinal.core._
 
 import scala.language.postfixOps
 
-case class DataBlock(width: BitCount) extends Bundle {
-  val valid = Bool
-  val payload = UInt(width = width)
-  valid := False
-}
-
 class ControlUnitBundle extends Bundle {
-  val bus = new Bus()
+//  val bus = new Bus()
 }
 
 class ControlUnit extends Component {
+  noIoPrefix()
   val io = new ControlUnitBundle()
 
   val PC = new ProgramCounter()
@@ -66,10 +61,10 @@ class ControlUnit extends Component {
   }
 
   def setIoBusDefaultValue(): Unit = {
-    io.bus.address.valid := False
-    io.bus.address.payload := 0
-    io.bus.data.valid := False
-    io.bus.data.payload := 0
+//    io.bus.address.valid := False
+//    io.bus.address.payload := 0
+//    io.bus.data.valid := False
+//    io.bus.data.payload := 0
   }
 
   def connectDecoderToRegisterFile(): Unit = {
@@ -80,21 +75,21 @@ class ControlUnit extends Component {
   }
 
   class RegData extends Area {
-    val alwaysValid = Bool(true)
-    val writeData = Bits(width = 32 bits) // pc, alu_res, mem_read;
+    val alwaysValid: Bool = Bool(true)
+    val writeData: Bits = Bits(width = 32 bits) // pc, alu_res, mem_read;
 
     writeData := 0
 
-    val aluA = Bits(32 bits)
-    val aluB = Bits(32 bits)
+    val aluA: Bits = Bits(32 bits)
+    val aluB: Bits = Bits(32 bits)
 
-    val pcOP = PC.io.op.clone()
-    val pcIMM = PC.io.imm.clone()
+    val pcOP: PC.io.op.type = PC.io.op.clone()
+    val pcIMM: PC.io.imm.type = PC.io.imm.clone()
   }
 
 
   class Branch extends Area {
-    val taken = Bool()
+    val taken: Bool = Bool()
 
     when(taken) {
       data.pcOP := OpCodes.PCOpCodes.ADD_OFFSET
