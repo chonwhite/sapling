@@ -40,6 +40,7 @@ class ControlUnit extends Component {
   registerFile.io.write.valid <> codeGenerator.regWriteEnable
   registerFile.io.write.payload <> decoder.io.rd
   registerFile.io.write_data <> data.writeData
+  data.writeData <> alu.io.res
   // branch & alu -> pc
   PC.io.op <> data.pcOP
   PC.io.imm <> data.pcIMM
@@ -77,8 +78,6 @@ class ControlUnit extends Component {
   class RegData extends Area {
     val alwaysValid: Bool = Bool(true)
     val writeData: Bits = Bits(width = 32 bits) // pc, alu_res, mem_read;
-
-    writeData := 0
 
     val aluA: Bits = Bits(32 bits)
     val aluB: Bits = Bits(32 bits)
