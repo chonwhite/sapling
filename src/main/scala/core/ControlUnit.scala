@@ -87,7 +87,6 @@ class ControlUnit extends Component {
     val pcIMM: PC.io.imm.type = PC.io.imm.clone()
   }
 
-
   class Branch extends Area {
     val taken: Bool = Bool()
 

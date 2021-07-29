@@ -11,6 +11,7 @@ object MicroCodes {
 }
 
 class MicroCodeGenerator(decoder: Decoder) extends Area{
+
   val aluSrc1 = UInt(width = 1 bits)
   val aluSrc2 = UInt(width = 1 bits)
   val aluOpSrc = UInt(width = 2 bits)
@@ -19,12 +20,19 @@ class MicroCodeGenerator(decoder: Decoder) extends Area{
 
   regWriteEnable := False //TODO
 
-  when(decoder.io.format === OpCodes.InstructionFormat.UFormat) {
-    aluSrc1 :=  MicroCodes.ALU_SRC_REG
-  } otherwise {
-    aluSrc1 :=  MicroCodes.ALU_SRC_IMM
-  }
+  // incorrect s1; all zero;
 
+  switch(decoder.io.format) {
+    is(OpCodes.InstructionFormat.UFormat) {
+      aluSrc1 :=  MicroCodes.ALU_SRC_IMM
+    }
+    is(OpCodes.InstructionFormat.JFormat) {
+      aluSrc1 :=  MicroCodes.ALU_SRC_IMM
+    }
+    default {
+      aluSrc1 :=  MicroCodes.ALU_SRC_REG
+    }
+  }
   // TODO
   when(decoder.io.format === OpCodes.InstructionFormat.UFormat) {
     aluSrc2 :=  MicroCodes.ALU_SRC_REG
