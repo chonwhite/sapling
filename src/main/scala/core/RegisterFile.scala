@@ -57,7 +57,7 @@ class RegisterFile(simSignal : Boolean = false) extends Component {
 }
 
 object RegisterFileVerilog {
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     SpinalVerilog(new RegisterFile)
   }
 }

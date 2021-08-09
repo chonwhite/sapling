@@ -37,7 +37,7 @@ class InstructionFetcher() extends Component {
 }
 
 object InstructionFetcherVerilog {
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     SpinalVerilog(new InstructionFetcher())
   }
 }

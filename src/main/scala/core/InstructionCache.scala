@@ -38,7 +38,7 @@ class InstructionCache(config: CacheConfig) extends Component {
     val data = master Flow Bits(width = config.width)
   }
 
-  val mem = Mem(Bits(32 bits), wordCount = 4096)
+  val mem = Mem(Bits(32 bits), wordCount = 128)
 
   mem.initialContent = config.content
   val outData = Bits(width = 32 bits)

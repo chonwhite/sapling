@@ -17,7 +17,7 @@ class DataMemoryControl extends Component{
 }
 
 object DataMemoryControlVerilog {
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     SpinalVerilog(new DataMemoryControl)
   }
 }

@@ -89,7 +89,7 @@ class ALU extends Component {
 }
 
 object ALUVerilog {
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     SpinalVerilog(new ALU)
   }
 }

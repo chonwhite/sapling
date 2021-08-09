@@ -38,7 +38,7 @@ class ProgramCounter extends Component {
 }
 
 object ProgramCounterVerilog {
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     SpinalVerilog(new ProgramCounter)
   }
 }

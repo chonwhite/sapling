@@ -32,7 +32,7 @@ class Decoder extends Component{
   private val fields = new Fields()
   io.format <> 0
   io.rd <> fields.rd
-  io.rs1 <> fields.rs1
+
   io.rs2 <> fields.rs2
   io.imm <> 0
   io.opcodes := fields.function3.resize(io.opcodes.getWidth)
@@ -44,6 +44,12 @@ class Decoder extends Component{
   val jDecoder = new JDecoder()
   val uDecoder = new UDecoder()
   val sDecoder = new SDecoder()
+
+  when (uDecoder.isUInstruction || jDecoder.isJFormatInstruction) {
+    io.rs1 := 0
+  } otherwise {
+    io.rs1 := fields.rs1
+  }
 
   def mapALUCode(function : UInt, function7 : Bool, code: UInt, isRFormat : Boolean): Unit = {
     switch(function){
@@ -133,7 +139,8 @@ class Decoder extends Component{
     val isLUIInstruction: Bool = fields.opcode_6_2 === U(0x0D)
     val isAUIPCInstruction: Bool = fields.opcode_6_2 === U(0x05)
     val imm: Bits = io.inst.payload(31 downto 12)
-    //    io.rs1 := 0
+    val isUInstruction = isLUIInstruction || isAUIPCInstruction
+
     when(isLUIInstruction) {
       io.format := InstructionFormat.UFormat
       io.opcodes := OpCodes.LUI
@@ -198,7 +205,7 @@ class Decoder extends Component{
 }
 
 object DecoderVerilog {
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     SpinalVerilog(new Decoder)
   }
 }

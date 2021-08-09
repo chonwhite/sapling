@@ -32,7 +32,7 @@ class ControlUnit extends Component {
   // registerFile -> ALU
   configALUInputMux()
   alu.io.op <> decoder.io.opcodes
-  alu.io.s1 <> data.aluA
+  alu.io.s1 <> registerFile.io.read1_data
   alu.io.s2 <> data.aluB
   // branch
   // alu -> mem
@@ -45,14 +45,9 @@ class ControlUnit extends Component {
   PC.io.op <> data.pcOP
   PC.io.imm <> data.pcIMM
 
-  val debugger = new CUDebugger(this)
+//  val debugger = new CUDebugger(this)
 
   def configALUInputMux(): Unit = {
-    when(codeGenerator.aluSrc1 === MicroCodes.ALU_SRC_REG){
-      data.aluA := registerFile.io.read1_data
-    } otherwise {
-      data.aluA := PC.io.pc
-    }
 
     when(codeGenerator.aluSrc2 === MicroCodes.ALU_SRC_REG) {
       data.aluB := registerFile.io.read2_data
@@ -125,7 +120,7 @@ class ControlUnit extends Component {
 }
 
 object ControlUnitVerilog {
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     SpinalVerilog(new ControlUnit())
   }
 }
