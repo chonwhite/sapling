@@ -21,7 +21,7 @@ class ProgramCounter extends Component {
   val immSigned: SInt = SInt(io.imm.getBitsWidth bits)
   immSigned := io.imm.asSInt
   val storedAddress: SInt = Reg(SInt(width = 32 bits)) init 0 //TODO
-  io.pc := storedAddress.resize(32 bits).asBits
+  io.pc := storedAddress.asBits
   switch(io.op) {
     is(PCOpCodes.INCREMENT) {
       storedAddress := storedAddress + four

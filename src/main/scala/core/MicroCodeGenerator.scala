@@ -19,17 +19,17 @@ class MicroCodeGenerator(decoder: Decoder) extends Area {
   val regWriteEnable: Bool = (decoder.io.format =/= OpCodes.InstructionFormat.SFormat
     && decoder.io.format =/= OpCodes.InstructionFormat.BFormat)
 
-  switch(decoder.io.format) {
-    is(OpCodes.InstructionFormat.SFormat) {
-      regWriteEnable := False
-    }
-    is(OpCodes.InstructionFormat.BFormat) {
-      regWriteEnable := False
-    }
-    default {
-      regWriteEnable := True
-    }
-  }
+//  switch(decoder.io.format) {
+//    is(OpCodes.InstructionFormat.SFormat) {
+//      regWriteEnable := False
+//    }
+//    is(OpCodes.InstructionFormat.BFormat) {
+//      regWriteEnable := False
+//    }
+//    default {
+//      regWriteEnable := True
+//    }
+//  }
 
   // incorrect s1; all zero;
   switch(decoder.io.format) {

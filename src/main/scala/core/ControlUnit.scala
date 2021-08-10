@@ -12,11 +12,11 @@ class ControlUnit extends Component {
   noIoPrefix()
   val io = new ControlUnitBundle()
 
-  val PC = new ProgramCounter()
+  val PC = ComponentFactory.programCounter()
   val instructionFetcher = new InstructionFetcher()
-  val registerFile = new RegisterFile()
-  val decoder = new Decoder()
-  val alu = new ALU()
+  val registerFile = ComponentFactory.registerFile()
+  val decoder = ComponentFactory.decoder()
+  val alu = ComponentFactory.alu()
 
   val data = new RegData()
   val branch = new Branch()
