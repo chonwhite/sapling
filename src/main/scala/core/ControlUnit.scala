@@ -45,7 +45,7 @@ class ControlUnit extends Component {
   PC.io.op <> data.pcOP
   PC.io.imm <> data.pcIMM
 
-//  val debugger = new CUDebugger(this)
+  val debugger = new CUDebugger(this)
 
   def configALUInputMux(): Unit = {
 
@@ -74,7 +74,7 @@ class ControlUnit extends Component {
     val alwaysValid: Bool = Bool(true)
     val writeData: Bits = Bits(width = 32 bits) // pc, alu_res, mem_read;
 
-    val aluA: Bits = Bits(32 bits)
+//    val aluA: Bits = Bits(32 bits)
     val aluB: Bits = Bits(32 bits)
 
     val pcOP: PC.io.op.type = PC.io.op.clone()

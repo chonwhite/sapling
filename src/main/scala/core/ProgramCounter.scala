@@ -6,15 +6,29 @@ import spinal.lib._
 
 import scala.language.postfixOps
 
+class PCDebugger extends BlackBox {
+  val io = new Bundle {
+    val op: Bits = in Bits(width = 2 bits)
+    val imm: Bits = in Bits(width = 32 bits)
+    val pc: Bits = in Bits(width = 32 bits)
+  }
+
+}
+
 class ProgramCounter extends Component {
 
   class PCBundle() extends Bundle {
-    val op: UInt = in UInt(width = 2 bits)
+    val op: Bits = in Bits(width = 2 bits)
     val imm: Bits = in Bits(width = 32 bits)
     val address: Flow[UInt] = master Flow UInt(width = 32 bits)
     val pc: Bits = out Bits(width = 32 bits)
   }
   val io: PCBundle = new PCBundle()
+
+  val PCDebugger = new PCDebugger()
+  PCDebugger.io.op := io.op.asBits
+  PCDebugger.io.imm := io.imm
+  PCDebugger.io.pc := io.pc;
 
   val four: SInt = SInt(width = 32 bits)
   four := 4
@@ -34,7 +48,7 @@ class ProgramCounter extends Component {
     }
   }
   io.address.payload := storedAddress.asUInt
-  io.address.valid := True
+  io.address.valid := !ClockDomain.current.reset
 }
 
 object ProgramCounterVerilog {

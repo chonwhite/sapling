@@ -30,8 +30,8 @@ class CUDebugger(cu: ControlUnit) extends Area{
 
   debugger.io.alu.clk <> ClockDomain.current.readClockWire
   debugger.io.alu.op <> cu.decoder.io.opcodes
-  debugger.io.alu.s1 <> cu.data.aluA
-  debugger.io.alu.s2 <> cu.data.aluB
+  debugger.io.alu.s1 <> cu.PC.io.address.payload.asBits
+  debugger.io.alu.s2 <> cu.PC.io.pc
   debugger.io.alu.res <> cu.alu.io.res
   debugger.io.alu.status.zero <> cu.alu.io.status.zero
   debugger.io.alu.status.negative <> cu.alu.io.status.negative
