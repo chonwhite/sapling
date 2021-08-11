@@ -89,7 +89,7 @@ class ControlUnit extends Component {
       data.pcIMM := decoder.io.imm
     } otherwise {
       data.pcOP := OpCodes.PCOpCodes.INCREMENT
-      data.pcIMM := 0
+      data.pcIMM := 4 //TODO
     }
 
     switch(decoder.io.opcodes) {
