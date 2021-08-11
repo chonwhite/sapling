@@ -1,5 +1,6 @@
 package core
 
+import core.OpCodes.InstructionFormat
 import spinal.core._
 
 import scala.language.postfixOps
@@ -84,7 +85,7 @@ class ControlUnit extends Component {
   class Branch extends Area {
     val taken: Bool = Bool()
 
-    when(taken) {
+    when(decoder.io.format === InstructionFormat.BFormat && taken) {
       data.pcOP := OpCodes.PCOpCodes.ADD_OFFSET
       data.pcIMM := decoder.io.imm
     } otherwise {
