@@ -25,10 +25,10 @@ class ProgramCounter extends Component {
   }
   val io: PCBundle = new PCBundle()
 
-  val PCDebugger = new PCDebugger()
-  PCDebugger.io.op := io.op.asBits
-  PCDebugger.io.imm := io.imm
-  PCDebugger.io.pc := io.pc;
+//  val PCDebugger = new PCDebugger()
+//  PCDebugger.io.op := io.op.asBits
+//  PCDebugger.io.imm := io.imm
+//  PCDebugger.io.pc := io.pc;
 
   val four: SInt = SInt(width = 32 bits)
   four := 4
@@ -48,7 +48,7 @@ class ProgramCounter extends Component {
     }
   }
   io.address.payload := storedAddress.asUInt
-  io.address.valid := !ClockDomain.current.reset
+  io.address.valid := !ClockDomain.current.readResetWire
 }
 
 object ProgramCounterVerilog {

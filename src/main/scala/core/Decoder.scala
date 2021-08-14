@@ -31,9 +31,6 @@ class Decoder extends Component{
 
   private val fields = new Fields()
   io.format <> 0
-  io.rd <> fields.rd
-
-  io.rs2 <> fields.rs2
   io.imm <> 0
   io.opcodes := fields.function3.resize(io.opcodes.getWidth)
 
@@ -49,6 +46,18 @@ class Decoder extends Component{
     io.rs1 := 0
   } otherwise {
     io.rs1 := fields.rs1
+  }
+
+  when(rDecoder.isRInstruction || sDecoder.isSFormat || bDecoder.isBFormatInstruction) {
+    io.rs2 := fields.rs2
+  } otherwise {
+    io.rs2 := 0
+  }
+
+  when(sDecoder.isSFormat || bDecoder.isBFormatInstruction) {
+    io.rd := 0
+  } otherwise {
+    io.rd := fields.rd
   }
 
   def mapALUCode(function : UInt, function7 : Bool, code: UInt, isRFormat : Boolean): Unit = {

@@ -19,19 +19,6 @@ class MicroCodeGenerator(decoder: Decoder) extends Area {
   val regWriteEnable: Bool = (decoder.io.format =/= OpCodes.InstructionFormat.SFormat
     && decoder.io.format =/= OpCodes.InstructionFormat.BFormat)
 
-  // incorrect s1; all zero;
-  switch(decoder.io.format) {
-    is(OpCodes.InstructionFormat.UFormat) {
-      aluSrc1 := MicroCodes.ALU_SRC_IMM
-    }
-    is(OpCodes.InstructionFormat.JFormat) {
-      aluSrc1 := MicroCodes.ALU_SRC_IMM
-    }
-    default {
-      aluSrc1 := MicroCodes.ALU_SRC_REG
-    }
-  }
-
   switch(decoder.io.format) {
     is(OpCodes.InstructionFormat.UFormat) {
       aluSrc2 := MicroCodes.ALU_SRC_IMM
@@ -40,6 +27,9 @@ class MicroCodeGenerator(decoder: Decoder) extends Area {
       aluSrc2 := MicroCodes.ALU_SRC_IMM
     }
     is(OpCodes.InstructionFormat.JFormat) {
+      aluSrc2 := MicroCodes.ALU_SRC_IMM
+    }
+    is(OpCodes.InstructionFormat.SFormat) {
       aluSrc2 := MicroCodes.ALU_SRC_IMM
     }
     default {
@@ -58,6 +48,9 @@ class MicroCodeGenerator(decoder: Decoder) extends Area {
       aluOpCodes := OpCodes.ALUOpCodes.SUB
     }
     is(OpCodes.InstructionFormat.UFormat) {
+      aluOpCodes := OpCodes.ALUOpCodes.ADD
+    }
+    is(OpCodes.InstructionFormat.SFormat) {
       aluOpCodes := OpCodes.ALUOpCodes.ADD
     }
     default {

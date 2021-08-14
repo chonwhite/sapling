@@ -12,26 +12,27 @@ class ControlUnitSim extends ControlUnit {
   class InstructionValidator {
 
     def compRegisters(): Unit = {
-//      for (index <- mockCPU.registers.indices) {
-//        if (mockCPU.registers(index) != registerFile.registers(index).toLong) {
-//          println(index)
-//          println(mockCPU.registers(index))
-//          println(registerFile.registers(index).toLong)
-//        }
-//        assert(mockCPU.registers(index) == registerFile.registers(index).toLong)
-//      }
+      for (index <- 0 to 31) {
+        if (mockCPU.registerFile.getRegister(index) != registerFile.registers(index).toLong) {
+          println(index)
+          println(mockCPU.registerFile.getRegister(index))
+          println(registerFile.registers(index).toLong)
+        }
+//        assert(mockCPU.registerFile.getRegister(index) == registerFile.registers(index).toLong)
+      }
     }
 
     def validate(instruction : Instruction): Unit = {
-      println(instruction)
-      compRegisters()
+//      println(instruction)
+//
 //      mockCPU.execInstruction(instruction)
+//      compRegisters()
     }
   }
 
   val validator = new InstructionValidator
 
-//  instructionFetcher.instructionCache.mem.simPublic()
+  instructionFetcher.instructionCache.mem.simPublic()
   for (register <- registerFile.registers) {
     register.simPublic()
   }
@@ -41,9 +42,9 @@ class ControlUnitSim extends ControlUnit {
       val assembler = new Assembler()
       val instructions = assembler.assembleFile(path)
 
-      for (index <- instructions.indices) {
+      for (index <- 0 to 200 * 1000) {
         clockDomain.waitSampling()
-        validator.validate(instructions(index))
+//        validator.validate(instructions(index))
       }
   }
 

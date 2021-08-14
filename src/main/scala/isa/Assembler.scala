@@ -85,7 +85,7 @@ class Assembler {
     if (RV32I.isJFormat(name)) {
       intArgs += RV32I.registerNames(tokens(0).trim)
       val labelIndex = indexMap(tokens(1).trim)
-      intArgs += (labelIndex - index) * 4
+      intArgs += (labelIndex) * 4
       return JInstruction(name, intArgs: _*)
     }
     if (RV32I.isSFormat(name)) {
