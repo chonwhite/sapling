@@ -1,21 +1,41 @@
 package core
 
 import core.OpCodes.PCOpCodes
-import spinal.core._
-import spinal.lib.master
+import spinal.core.{Bits, _}
+import spinal.lib._
 
-class ProgramCounter extends Component {
+import scala.language.postfixOps
+
+class PCDebugger extends BlackBox {
   val io = new Bundle {
-    val op = in UInt(width = 2 bits)
-    val imm = in Bits(width = 32 bits)
-    val address = master Flow(UInt(width = 32 bits))
+    val op: Bits = in Bits(width = 2 bits)
+    val imm: Bits = in Bits(width = 32 bits)
+    val pc: Bits = in Bits(width = 32 bits)
   }
 
-  val four = SInt(width = 32 bits)
+}
+
+class ProgramCounter extends Component {
+
+  class PCBundle() extends Bundle {
+    val op: Bits = in Bits(width = 2 bits)
+    val imm: Bits = in Bits(width = 32 bits)
+    val address: Flow[UInt] = master Flow UInt(width = 32 bits)
+    val pc: Bits = out Bits(width = 32 bits)
+  }
+  val io: PCBundle = new PCBundle()
+
+//  val PCDebugger = new PCDebugger()
+//  PCDebugger.io.op := io.op.asBits
+//  PCDebugger.io.imm := io.imm
+//  PCDebugger.io.pc := io.pc;
+
+  val four: SInt = SInt(width = 32 bits)
   four := 4
-  val immSigned = SInt(io.imm.getBitsWidth bits)
+  val immSigned: SInt = SInt(io.imm.getBitsWidth bits)
   immSigned := io.imm.asSInt
-  val storedAddress = Reg(SInt(width = 32 bits)) init 0 //TODO
+  val storedAddress: SInt = Reg(SInt(width = 32 bits)) init 0 //TODO
+  io.pc := storedAddress.asBits
   switch(io.op) {
     is(PCOpCodes.INCREMENT) {
       storedAddress := storedAddress + four
@@ -28,12 +48,11 @@ class ProgramCounter extends Component {
     }
   }
   io.address.payload := storedAddress.asUInt
-  io.address.valid := True
+  io.address.valid := !ClockDomain.current.readResetWire
 }
 
-
 object ProgramCounterVerilog {
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     SpinalVerilog(new ProgramCounter)
   }
 }

@@ -26,7 +26,7 @@ object OpCodes {
     val OR = 6 // OR : rs1 | rs2
     val AND = 7 // AND : rs1 & rs2
 
-    val codeNameMap = HashMap(
+    val codeNameMap: Map[Int, String] = HashMap(
       ADD->"ADD",
       SUB->"SUB",
       SLL->"SLL",
@@ -48,7 +48,7 @@ object OpCodes {
     val LOAD_BYTE = 0
     val LOAD_HALF = 1
     val LOAD_WORD = 2
-    val LUI = 3
+
 
   }
 
@@ -58,6 +58,7 @@ object OpCodes {
     val STORE_WORD = 2
   }
 
+  val LUI = 3
   val AUIPC = 4
 
   object BranchOpCodes {
@@ -66,7 +67,7 @@ object OpCodes {
     val BLT = 4 //branch less than
     val BGE = 5
     val BLTU = 6
-    val BGEu = 7
+    val BGEU = 7
   }
 
   object PCOpCodes {

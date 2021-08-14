@@ -2,91 +2,73 @@ package sim
 
 import core.ALU
 import core.OpCodes.ALUOpCodes
+import sim.SimToolkit._
 import spinal.core.sim._
 
 import scala.util.Random
 
-object ALUSim {
+class ALUSim extends ALU {
+  var A = BigInt(0.toBinaryString, 2)
+  var B = BigInt(0.toBinaryString, 2)
 
-  val shift_ops = List(ALUOpCodes.SLL, ALUOpCodes.SRL, ALUOpCodes.SRA)
-
-  def sim_op(op: Int) {
-    SimConfig.withWave.doSim(new ALU) { dut =>
-      //Fork a process to generate the reset and the clock on the dut
-      dut.clockDomain.forkStimulus(period = 10)
-      var resultModel = BigInt(0.toBinaryString, 2)
-      var lastA = BigInt(0.toBinaryString, 2)
-      var lastB = BigInt(0.toBinaryString, 2)
-      for (_ <- 0 to 100) {
-        //Drive the dut inputs with random values
-        var a = BigInt(Random.nextInt().toBinaryString, 2)
-        var b = BigInt(Random.nextInt().toBinaryString, 2)
-        if (shift_ops.contains(op)) {
-          b = BigInt(Random.nextInt(32).toBinaryString, 2)
-        }
-
-        dut.io.op #= op
-        dut.io.s1 #= a
-        dut.io.s2 #= b
-
-        dut.clockDomain.waitSampling()
-        assert(dut.io.res.toBigInt.toInt == resultModel.toInt)
-
-        op match {
-          case ALUOpCodes.ADD => resultModel = a.toInt + b.toInt
-          case ALUOpCodes.SUB => resultModel = a.toInt - b.toInt
-          case ALUOpCodes.SLL => resultModel = a.toInt << b.toInt
-          case ALUOpCodes.SLT =>
-            if (a.toInt < b.toInt) {
-              resultModel = 1
-            } else {
-              resultModel = 0
-            }
-          case ALUOpCodes.SLTU =>
-            if (a.toLong < b.toLong) {
-              resultModel = 1
-            } else {
-              resultModel = 0
-            }
-          case ALUOpCodes.XOR => resultModel = a.toInt ^ b.toInt
-          case ALUOpCodes.SRL => resultModel = a.toLong >> b.toInt
-          case ALUOpCodes.SRA => resultModel = a.toInt >> b.toInt
-          case ALUOpCodes.OR => resultModel = a.toLong | b.toLong
-          case ALUOpCodes.AND => resultModel = a.toLong & b.toLong
-
-        }
-        lastA = a
-        lastB = b
-      }
-    }
-    println("op %d success!".format(op))
+  def add(a : Int, b : Int) : Int = {
+    io.s1 #= a
+    io.s2 #= b
+    io.res.toInt
   }
 
-  def main(args: Array[String]) {
-    val ops = Array(
-      ALUOpCodes.ADD,
-      ALUOpCodes.SUB,
-      ALUOpCodes.SLL,
-      ALUOpCodes.SLT,
-      ALUOpCodes.SLTU,
-      ALUOpCodes.XOR,
-      ALUOpCodes.SRL,
-      //      ALUOpCodes.SRA,
-      ALUOpCodes.OR,
-      ALUOpCodes.AND
-    )
-    for (op <- ops) {
-      sim_op(op)
+  def simOp(op: Int): Unit = {
+    val a = Random.nextInt()
+    var b = Random.nextInt()
+    if (shiftOps.contains(op)) {
+      b = Random.nextInt(32)
     }
-    //    sim_op(ALUOpCodes.ADD)
-    //    sim_op(ALUOpCodes.SUB)
-    //    sim_op(ALUOpCodes.SLL)
-    //    sim_op(ALUOpCodes.SLT)
-    //    sim_op(ALUOpCodes.SLTU)
-    //    sim_op(ALUOpCodes.XOR)
-    //    sim_op(ALUOpCodes.SRL)
-    ////    sim_op(ALUOpCodes.SRA)
-    //    sim_op(ALUOpCodes.OR)
-    //    sim_op(ALUOpCodes.AND)
+    A = BigInt(a.toBinaryString, 2)
+    B = BigInt(b.toBinaryString, 2)
+
+    io.op #= op
+    io.s1 #= A
+    io.s2 #= B
+    sleep(cycles = 1)
+    println("===")
+    println(io.res.toBigInt.toInt)
+    println(eval(op).toInt)
+
+    assert(io.res.toBigInt.toInt == eval(op).toInt)
+    assert(io.status.negative.toBoolean == negative(op))
+  }
+
+  def negative(op : Int) : Boolean = {
+    eval(op).toInt < 0
+  }
+
+  def eval(op: Int): Long = {
+    var result = 0L
+    op match {
+      case ALUOpCodes.ADD => result = A.toInt + B.toInt
+      case ALUOpCodes.SUB => result = A.toInt - B.toInt
+      case ALUOpCodes.SLL => result = A.toLong << B.toInt
+      case ALUOpCodes.SLT =>
+        if (A.toInt < B.toInt) {
+          result = 1
+        } else {
+          result = 0
+        }
+      case ALUOpCodes.SLTU =>
+        if (A.toLong < B.toLong) {
+          result = 1
+        } else {
+          result = 0
+        }
+      case ALUOpCodes.XOR => result = A.toInt ^ B.toInt
+      case ALUOpCodes.SRL => result = A.toLong >> B.toInt
+      case ALUOpCodes.SRA => result = A.toInt >> B.toInt
+      case ALUOpCodes.OR => result = A.toLong | B.toLong
+      case ALUOpCodes.AND => result = A.toLong & B.toLong
+
+    }
+    result
   }
 }
+
+

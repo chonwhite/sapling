@@ -1,30 +1,17 @@
 package sim
 
 import core.InstructionFetcher
+import isa.Instruction
 import spinal.core.sim._
 
-object InstructionFetcherSim {
+class InstructionFetcherSim extends InstructionFetcher {
+//  instructionCache.mem.simPublic()
 
-  def main(args: Array[String]): Unit = {
-    SimConfig.withWave.compile {
-      val dut = new InstructionFetcher(null)
-      for (reg <- dut.instructionCache.registers) {
-        reg.simPublic()
-      }
-      dut
-    }.doSim { dut =>
-      dut.clockDomain.forkStimulus(period = 10)
-      for ( index <- 0 to 31) {
-        dut.instructionCache.registers(index) #= index * 10
-      }
-
-      for ( index <- 0 to 300) {
-        dut.io.address.valid #= true
-        dut.io.address.payload #= index
-//        dut.mem(0) #= 1.toLong
-//        sleep(1)
-        dut.clockDomain.waitSampling()
-      }
+  def fillCache(instructions: Array[Instruction]): Unit = {
+    for (index <- instructions.indices) {
+      val inst = instructions(index)
+//      instructionCache.mem.write(index, inst.toBigInt)
+//      instructionCache.registers(index) #= inst.toBigInt
     }
   }
 }
