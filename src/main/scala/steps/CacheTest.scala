@@ -4,6 +4,8 @@ import core.{BRamCache, CacheConfig}
 import mafufactor.ILA
 import spinal.core._
 
+import scala.language.postfixOps
+
 class CacheTest extends Component{
   val io: Bundle = new Bundle {}
 
@@ -14,7 +16,8 @@ class CacheTest extends Component{
 
   val config: CacheConfig = CacheConfig(width = 32 bits,
     depth = 32, rows = 2, content = null)
-  val cache = new BRamCache(config)
+  val cache = new BRamCache()
+  cache.setConfig(config)
   val valid: Bool = reset
   val address: UInt = Reg(UInt(width = 32 bits))
   address.init(0)
@@ -22,16 +25,13 @@ class CacheTest extends Component{
   val debugger = new ILA()
 
   address := address + 4
-//  debugger.io.clk <> clk
-//  cache.io.clk <> clk
   cache.io.address.valid <> valid
   cache.io.address.payload <> address
 
-//  debugger.io.data <> cache.io.data
 }
 
 object CacheTestVerilog {
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     SpinalVerilog(new CacheTest())
   }
 }

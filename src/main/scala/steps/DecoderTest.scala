@@ -15,12 +15,12 @@ class DecoderTest extends Component{
   val PC = new MockPC()
   val config: CacheConfig = CacheConfig(width = 32 bits,
     depth = 32, rows = 2, content = null)
-  val cache = new BRamCache(config)
+  val cache = new BRamCache()
+  cache.setConfig(config)
   val decoder = new Decoder()
   decoder.io.inst <> cache.io.data
   val debugger = new DecoderILA()
 
-//  cache.io.clk <> clk
   cache.io.address <> PC.io.address
 
   debugger.io.clk <> clk
@@ -34,7 +34,7 @@ class DecoderTest extends Component{
 }
 
 object DecoderTestVerilog {
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     SpinalVerilog(new DecoderTest())
   }
 }

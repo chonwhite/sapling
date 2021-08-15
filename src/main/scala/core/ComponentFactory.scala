@@ -16,4 +16,8 @@ object ComponentFactory {
   def alu() : ALU = {
     new ALU()
   }
+
+  def instructionCache() : InstructionCache = {
+    new MemInstructionCache()
+  }
 }
