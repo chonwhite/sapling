@@ -23,7 +23,7 @@ class CacheTest extends Component{
 
   address := address + 4
 //  debugger.io.clk <> clk
-  cache.io.clk <> clk
+//  cache.io.clk <> clk
   cache.io.address.valid <> valid
   cache.io.address.payload <> address
 

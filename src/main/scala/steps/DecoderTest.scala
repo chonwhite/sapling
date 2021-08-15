@@ -20,7 +20,7 @@ class DecoderTest extends Component{
   decoder.io.inst <> cache.io.data
   val debugger = new DecoderILA()
 
-  cache.io.clk <> clk
+//  cache.io.clk <> clk
   cache.io.address <> PC.io.address
 
   debugger.io.clk <> clk

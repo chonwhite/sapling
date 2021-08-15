@@ -1,4 +1,4 @@
-package mafufactor
+package boards
 
 import core.ControlUnit
 import spinal.core._
@@ -19,7 +19,6 @@ class Zynq7010 extends Component{
   val cv = new ControlUnit()
 
   io.led := 0
-
 }
 
 object ControlUnitVerilog {
