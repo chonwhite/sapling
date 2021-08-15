@@ -4,6 +4,7 @@ import core.{ControlUnit, GlobalConfig}
 import spinal.core._
 
 import sys.process._
+
 import scala.language.postfixOps
 
 class ResetGenerator extends Area {
@@ -43,7 +44,6 @@ class iCESugarNano extends Component {
 object iCESugarNanoVerilog {
 
   def main(args: Array[String]): Unit = {
-
     GlobalConfig.assemblyFile = "test/led.S"
 
     val projectPath = "projects/iCESugar-nano"

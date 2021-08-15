@@ -5,6 +5,8 @@ import spinal.lib.{master, slave}
 
 import scala.language.postfixOps
 
+//import GlobalCofnig
+
 class InstructionFetcherBundle extends Bundle {
   val address = slave Flow UInt(width = 32 bits)
   val instruction = master Flow Bits(width = 32 bits)

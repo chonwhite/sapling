@@ -7,8 +7,6 @@ I choose [SpinalHDL](https://github.com/SpinalHDL/SpinalHDL), as my programming 
 for installation guidelines ,please follow SpinalHDL sbt guidelines: [Spinal sbt](https://github.com/SpinalHDL/SpinalTemplateSbt)
 
 
-## set program
-
 GlobalConfig.assemblyFile = "test/led.S"
 
 ### build for iCESugar-

@@ -33,6 +33,7 @@ case class Tag() extends Bundle {
 }
 
 class BRamCache extends BlackBox with InstructionCache{
+
   noIoPrefix()
   addRTLPath("AXI4MemoryBus.v")
 

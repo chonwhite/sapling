@@ -25,6 +25,7 @@ class CacheTest extends Component{
   val debugger = new ILA()
 
   address := address + 4
+
   cache.io.address.valid <> valid
   cache.io.address.payload <> address
 
