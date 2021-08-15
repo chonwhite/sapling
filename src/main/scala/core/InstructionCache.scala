@@ -32,7 +32,8 @@ case class Tag() extends Bundle {
   val tag = UInt(width = 2 bits)
 }
 
-class BRamCache(config: CacheConfig) extends BlackBox with InstructionCache{
+class BRamCache extends BlackBox with InstructionCache{
+
   noIoPrefix()
   addRTLPath("AXI4MemoryBus.v")
 
@@ -62,7 +63,6 @@ class MemInstructionCache extends Component with InstructionCache{
 
 object CacheVerilog {
   def main(args: Array[String]): Unit = {
-    //    SpinalVerilog(new Cache(32 bits, 32))
     val cacheConfig = CacheConfig(
       width = 32 bits,
       depth = 4,
@@ -71,7 +71,7 @@ object CacheVerilog {
     );
 //    val dataBus = new NativeBus()
     SpinalConfig(device = Device.XILINX)
-          .generateVerilog(new BRamCache(cacheConfig))
+          .generateVerilog(new BRamCache())
   }
 }
 

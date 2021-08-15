@@ -17,14 +17,15 @@ class ALUTest extends Component{
   val PC = new MockPC()
   val config = CacheConfig(width = 32 bits,
     depth = 32, rows = 2, content = null)
-  val cache = new BRamCache(config)
+  val cache = new BRamCache()
+  cache.setConfig(config)
+
   val decoder = new Decoder()
   decoder.io.inst <> cache.io.data
 
   val debugger = new AluILA()
   val alu = new ALU()
 
-//  cache.io.clk <> clk
   cache.io.address <> PC.io.address
 
   alu.io.op <> decoder.io.opcodes
@@ -40,7 +41,7 @@ class ALUTest extends Component{
 }
 
 object ALUTestVerilog {
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     SpinalVerilog(new ALUTest())
   }
 }

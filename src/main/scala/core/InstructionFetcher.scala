@@ -15,7 +15,7 @@ class InstructionFetcherBundle extends Bundle {
 class InstructionFetcher() extends Component {
   val io: InstructionFetcherBundle = new InstructionFetcherBundle()
 
-  val instructionCache = new MemInstructionCache() //TODO
+  val instructionCache = ComponentFactory.instructionCache
   instructionCache.setConfig(GlobalConfig.cacheConfig());
 
   instructionCache.io.address <> io.address
