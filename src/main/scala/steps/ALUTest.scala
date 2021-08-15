@@ -24,7 +24,7 @@ class ALUTest extends Component{
   val debugger = new AluILA()
   val alu = new ALU()
 
-  cache.io.clk <> clk
+//  cache.io.clk <> clk
   cache.io.address <> PC.io.address
 
   alu.io.op <> decoder.io.opcodes

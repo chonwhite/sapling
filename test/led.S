@@ -1,6 +1,6 @@
 addi s1, zero, 1
 addi s2, zero, 1
-addi s3, zero, 7
+addi s3, zero, 255
 slli s1, s1, 23 #iteration count
 slli s2, s2, 10 #gpio address
 addi a1, zero, 0 #a1 is used for led status

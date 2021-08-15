@@ -5,6 +5,16 @@ import spinal.lib._
 
 import scala.language.postfixOps
 
+class InstructCacheBundle extends Bundle {
+  val address = slave Flow UInt(width = 32 bits)
+  val data = master Flow Bits(width = 32 bits)
+}
+
+trait InstructionCache extends Component {
+  val io = new InstructCacheBundle()
+  def setConfig(config :CacheConfig): Unit
+}
+
 case class CacheConfig(
                         width: BitCount,
                         depth: Int,
@@ -22,25 +32,17 @@ case class Tag() extends Bundle {
   val tag = UInt(width = 2 bits)
 }
 
-class BRamCache(config: CacheConfig) extends BlackBox {
-  val io = new Bundle {
-    val clk = in Bool()
-    val address = slave Flow UInt(width = 32 bits)
-    val data = master Flow Bits(width = 32 bits)
-  }
+class BRamCache(config: CacheConfig) extends BlackBox with InstructionCache{
   noIoPrefix()
   addRTLPath("AXI4MemoryBus.v")
+
+  override def setConfig(config: CacheConfig): Unit = {}
+
+  override type RefOwnerType = this.type
 }
 
-class InstructionCache(config: CacheConfig) extends Component {
-  val io = new Bundle {
-    val address = slave Flow UInt(width = 32 bits)
-    val data = master Flow Bits(width = config.width)
-  }
-
+class MemInstructionCache extends Component with InstructionCache{
   val mem = Mem(Bits(32 bits), wordCount = 128)
-
-  mem.initialContent = config.content
   val outData = Bits(width = 32 bits)
 
   outData := 0
@@ -50,6 +52,12 @@ class InstructionCache(config: CacheConfig) extends Component {
   when(io.address.valid) {
     outData := mem.readAsync(io.address.payload(log2Up(mem.wordCount) + 1 downto 2))
   }
+
+  override def setConfig(config: CacheConfig): Unit = {
+    mem.initialContent = config.content
+  }
+
+  override type RefOwnerType = this.type
 }
 
 object CacheVerilog {

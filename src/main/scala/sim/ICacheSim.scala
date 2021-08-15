@@ -2,9 +2,11 @@ package sim
 
 import core.{CacheConfig, InstructionCache}
 import isa.Assembler
+import spinal.core.Component
 import spinal.core.sim._
 
-class ICacheSim(config: CacheConfig) extends InstructionCache(config) {
+class ICacheSim(config: CacheConfig) extends Component with InstructionCache {
+
   def simAssemblyFile(file: String): Unit = {
     val assembler = new Assembler()
     val instructions = assembler.assembleFile(file)
@@ -26,4 +28,10 @@ class ICacheSim(config: CacheConfig) extends InstructionCache(config) {
     io.address.valid #= true
     sleep(1)
   }
+
+  override def setConfig(config: CacheConfig): Unit = {
+
+  }
+
+  override type RefOwnerType = this.type
 }
