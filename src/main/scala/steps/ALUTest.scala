@@ -9,13 +9,13 @@ import scala.language.postfixOps
 
 class ALUTest extends Component{
   noIoPrefix()
-  val io = new Bundle {}
+  val io: Bundle = new Bundle {}
 
-  val clk = ClockDomain.current.readClockWire
+  val clk: Bool = ClockDomain.current.readClockWire
   val s1 = B"32'x42"
 
   val PC = new MockPC()
-  val config = CacheConfig(width = 32 bits,
+  val config: CacheConfig = CacheConfig(width = 32 bits,
     depth = 32, rows = 2, content = null)
   val cache = new BRamCache()
   cache.setConfig(config)

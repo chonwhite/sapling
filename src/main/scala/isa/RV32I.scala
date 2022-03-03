@@ -6,7 +6,7 @@ import scala.collection.immutable.HashMap
 
 object RV32I {
 
-  val registerNames = HashMap(
+  val registerNames: HashMap[String, Int] = HashMap(
     "zero" -> 0, "ra" -> 1, "sp" -> 2, "gp" -> 3,
     "gp" -> 4, "t0" -> 5, "t1" -> 6, "t2" -> 7,
     "s0" -> 8, "fp" -> 8, "s0" -> 8, "s1" -> 9,
@@ -18,7 +18,7 @@ object RV32I {
     "t3" -> 28, "t4" -> 29, "t5" -> 30, "t6" -> 31
   )
 
-  val RNameToALUOp = HashMap(
+  val RNameToALUOp: HashMap[String, Int] = HashMap(
     "add" -> OpCodes.ALUOpCodes.ADD,
     "sub" -> OpCodes.ALUOpCodes.SUB,
     "sll" -> OpCodes.ALUOpCodes.SLL,
@@ -30,9 +30,9 @@ object RV32I {
     "or" -> OpCodes.ALUOpCodes.OR,
     "and" -> OpCodes.ALUOpCodes.AND)
 
-  val ROpToName = Map() ++ RNameToALUOp.map(_.swap)
+  val ROpToName: Map[Int, String] = Map() ++ RNameToALUOp.map(_.swap)
 
-  val INameToALUOp = HashMap(
+  val INameToALUOp: HashMap[String, Int] = HashMap(
     "addi" -> OpCodes.ALUOpCodes.ADD,
     "slli" -> OpCodes.ALUOpCodes.SLL,
     "slti" -> OpCodes.ALUOpCodes.SLT,
@@ -43,7 +43,7 @@ object RV32I {
     "ori" -> OpCodes.ALUOpCodes.OR,
     "andi" -> OpCodes.ALUOpCodes.AND)
 
-  val BNameToOp = HashMap(
+  val BNameToOp: HashMap[String, Int] = HashMap(
     "beq" -> OpCodes.BranchOpCodes.BEQ,
     "bne" -> OpCodes.BranchOpCodes.BNE,
     "blt" -> OpCodes.BranchOpCodes.BLT,
@@ -52,13 +52,13 @@ object RV32I {
     "bgeu" -> OpCodes.BranchOpCodes.BGEU
   )
 
-  val SNameToOp = HashMap(
+  val SNameToOp: HashMap[String, Int] = HashMap(
     "sb" -> OpCodes.StoreOpcodes.STORE_BYTE,
     "sh" -> OpCodes.StoreOpcodes.STORE_HALF,
     "sw" -> OpCodes.StoreOpcodes.STORE_WORD
   )
 
-  val IOpToName = Map() ++ INameToALUOp.map(_.swap)
+  val IOpToName: Map[Int, String] = Map() ++ INameToALUOp.map(_.swap)
 
   def isRFormat(name: String): Boolean = {
     RNameToALUOp.keySet.contains(name)

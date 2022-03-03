@@ -13,11 +13,11 @@ class ControlUnit extends Component {
   noIoPrefix()
   val io = new ControlUnitBundle()
 
-  val PC = ComponentFactory.programCounter()
+  val PC: ProgramCounter = ComponentFactory.programCounter()
   val instructionFetcher = new InstructionFetcher()
-  val registerFile = ComponentFactory.registerFile()
-  val decoder = ComponentFactory.decoder()
-  val alu = ComponentFactory.alu()
+  val registerFile: RegisterFile = ComponentFactory.registerFile()
+  val decoder: Decoder = ComponentFactory.decoder()
+  val alu: ALU = ComponentFactory.alu()
 
   val data = new RegData()
   val branch = new Branch()
@@ -76,7 +76,7 @@ class ControlUnit extends Component {
   class Branch extends Area {
     val taken: Bool = Bool()
     val isBranchInst: Bool = decoder.io.format === InstructionFormat.BFormat
-    val shouldBranch = isBranchInst && taken
+    val shouldBranch: Bool = isBranchInst && taken
 
     when(shouldBranch) {
       data.pcOP := OpCodes.PCOpCodes.ADD_OFFSET

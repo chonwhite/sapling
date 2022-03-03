@@ -6,8 +6,8 @@ import spinal.lib._
 import scala.language.postfixOps
 
 class InstructCacheBundle extends Bundle {
-  val address = slave Flow UInt(width = 32 bits)
-  val data = master Flow Bits(width = 32 bits)
+  val address: Flow[UInt] = slave Flow UInt(width = 32 bits)
+  val data: Flow[Bits] = master Flow Bits(width = 32 bits)
 }
 
 trait InstructionCache extends Component {
@@ -27,9 +27,9 @@ case class CacheConfig(
 }
 
 case class Tag() extends Bundle {
-  val valid = Reg(Bool) init False
-  val dirty = Reg(Bool) init False
-  val tag = UInt(width = 2 bits)
+  val valid: Bool = Reg(Bool) init False
+  val dirty: Bool = Reg(Bool) init False
+  val tag: UInt = UInt(width = 2 bits)
 }
 
 class BRamCache extends BlackBox with InstructionCache{
@@ -43,8 +43,8 @@ class BRamCache extends BlackBox with InstructionCache{
 }
 
 class MemInstructionCache extends Component with InstructionCache{
-  val mem = Mem(Bits(32 bits), wordCount = 128)
-  val outData = Bits(width = 32 bits)
+  val mem: Mem[Bits] = Mem(Bits(32 bits), wordCount = 128)
+  val outData: Bits = Bits(width = 32 bits)
 
   outData := 0
   io.data.valid := io.address.valid

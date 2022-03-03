@@ -5,16 +5,18 @@ import spinal.lib._
 
 import scala.language.postfixOps
 
+class AddressBundle extends Bundle {
+  val address: Flow[UInt] = master Flow UInt(width = 32 bits)
+}
+
 class MockPC extends Component{
-  val io = new Bundle{
-    val address = master Flow UInt(width = 32 bits)
-  }
+  val io = new AddressBundle()
 
-  val clk = ClockDomain.current.readClockWire
-  val reset = ClockDomain.current.readResetWire
+  val clk: Bool = ClockDomain.current.readClockWire
+  val reset: Bool = ClockDomain.current.readResetWire
 
-  val valid = reset
-  val address = Reg(UInt(width = 32 bits))
+  val valid: Bool = reset
+  val address: UInt = Reg(UInt(width = 32 bits))
   address.init(0)
 
   address := address + 4

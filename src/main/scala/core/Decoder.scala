@@ -148,7 +148,7 @@ class Decoder extends Component{
     val isLUIInstruction: Bool = fields.opcode_6_2 === U(0x0D)
     val isAUIPCInstruction: Bool = fields.opcode_6_2 === U(0x05)
     val imm: Bits = io.inst.payload(31 downto 12)
-    val isUInstruction = isLUIInstruction || isAUIPCInstruction
+    val isUInstruction: Bool = isLUIInstruction || isAUIPCInstruction
 
     when(isLUIInstruction) {
       io.format := InstructionFormat.UFormat

@@ -17,7 +17,7 @@ trait Instruction {
   }
 
   def formatBin(str: String, args: Int*): String = {
-    var list = ListBuffer[Long]()
+    val list = ListBuffer[Long]()
     for (arg <- args) {
       val str = arg.toBinaryString
       val number = Integer.parseUnsignedInt(str, 2)
@@ -26,7 +26,7 @@ trait Instruction {
     str.format(list: _*).replaceAll("\\s", "")
   }
 
-  def toBinary(x: Int, len: Int) = {
+  def toBinary(x: Int, len: Int): String = {
     val result = new StringBuilder
     for (i <- len - 1 to 0 by -1) {
       val mask = 1 << i
@@ -140,7 +140,7 @@ class SInstruction(val rs1: Int, val rs2: Int, val imm: Int, val opcode: Int) ex
       toBinary(function3, 3) + backward(4, 0, immString) + toBinary(0x08, 5) + "11"
   }
 
-  override def toString = {
+  override def toString: String = {
     "%s %d %d(%d)".format(name, rs2, imm, rs1)
   }
 }

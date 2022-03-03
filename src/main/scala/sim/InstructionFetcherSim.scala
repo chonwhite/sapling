@@ -2,7 +2,6 @@ package sim
 
 import core.InstructionFetcher
 import isa.Instruction
-import spinal.core.sim._
 
 class InstructionFetcherSim extends InstructionFetcher {
 //  instructionCache.mem.simPublic()

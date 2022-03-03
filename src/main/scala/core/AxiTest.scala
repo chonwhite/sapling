@@ -4,8 +4,10 @@ import spinal.core._
 import spinal.lib.bus.amba4.axi.{Axi4, Axi4Config}
 import spinal.lib.master
 
+import scala.language.postfixOps
+
 class AxiTest extends Component{
-  var config = Axi4Config (
+  var config: Axi4Config = Axi4Config (
     addressWidth = 32,
     dataWidth = 128,
     useQos = false,
@@ -18,10 +20,10 @@ class AxiTest extends Component{
   )
 
   val io = new Bundle {
-    val axi_m = master (Axi4(config))
+    val axi_m: Axi4 = master (Axi4(config))
   }
 
-  val data = Bits(width = 128 bits)
+  val data: Bits = Bits(width = 128 bits)
   data := 0
 
   io.axi_m.r.ready := True

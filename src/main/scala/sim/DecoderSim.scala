@@ -17,7 +17,6 @@ class DecoderSim extends Decoder {
   }
 
   def simRFormat(op: Int): Unit = {
-    val dut = this
     for (rd <- 0 to 31) {
       for (rs1 <- 0 to 31) {
         for (rs2 <- 0 to 31) {
@@ -51,7 +50,6 @@ class DecoderSim extends Decoder {
   }
 
   def simIFormat(op: Int): Unit = {
-    val dut = this
     val immRange = 1 << 11 - 1
     val halfRange = immRange / 2
     for (rd <- 0 to 31) {

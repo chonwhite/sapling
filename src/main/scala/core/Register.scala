@@ -1,6 +1,6 @@
 package core
 
-import spinal.core.{Reg, _}
+import spinal.core._
 import spinal.lib._
 
 import scala.language.postfixOps
@@ -17,7 +17,7 @@ class Register extends Component{
   }
   val io = new RegisterBundle()
 
-  val mem = Mem(Bits(32 bits), wordCount = 32)
+  val mem: Mem[Bits] = Mem(Bits(32 bits), wordCount = 32)
 //  mem.initialContent = 0
   io.read1_data := mem.readAsync(io.read1)
   io.read2_data := mem.readAsync(io.read2)

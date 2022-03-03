@@ -8,8 +8,8 @@ import sys.process._
 import scala.language.postfixOps
 
 class ResetGenerator extends Area {
-  val counter = Reg(UInt(width = 12 bits)) init 0
-  val reset = Reg(Bool) init True
+  val counter: UInt = Reg(UInt(width = 12 bits)) init 0
+  val reset: Bool = Reg(Bool) init True
   when(counter < 1024) {
     reset := True
     counter := counter + 1
@@ -27,9 +27,9 @@ class iCESugarNano extends Component {
   val io = new iCESugarNanoBundle()
   val resetGenerator = new ResetGenerator()
 
-  val gpioAddress = U"32'd1024".asBits
+  val gpioAddress: Bits = U"32'd1024".asBits
 
-  val led = Reg(Bits(width = 8 bits)) init 0
+  val led: Bits = Reg(Bits(width = 8 bits)) init 0
 
   val cv = new ControlUnit()
   when(cv.io.bus.address.valid) {

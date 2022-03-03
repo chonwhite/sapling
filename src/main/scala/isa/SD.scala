@@ -8,10 +8,10 @@ import scala.language.postfixOps
 class SD extends Component{
   val ss = U"32'h1A"
 
-  val ssm = ss === ADD
+//  val ssm = ss === ADD
 
 //  val opcode = UInt(2 bits)
-  val opcode = UInt(width = 3 bits)
+  val opcode: UInt = UInt(width = 3 bits)
 
   when(ss === ADD) {
     opcode := U"01"
@@ -19,7 +19,7 @@ class SD extends Component{
   when(ss === SUB) {
     opcode := U"02"
   }
-  when(ss === BEQ(true)) {
+  when(ss === BEQ) {
     opcode := U"03"
   }
 //  switch(ss){
@@ -43,7 +43,7 @@ class SD extends Component{
 }
 
 object SDVerilog {
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     SpinalVerilog(new SD)
   }
 }

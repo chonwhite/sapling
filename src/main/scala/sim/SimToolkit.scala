@@ -4,13 +4,13 @@ import core.OpCodes.ALUOpCodes
 
 object SimToolkit {
 
-  val shiftOps = Array(
+  val shiftOps: Array[Int] = Array(
     ALUOpCodes.SLL,
     ALUOpCodes.SRL,
     ALUOpCodes.SRA
   )
 
-  val ImmOps = Array(
+  val ImmOps: Array[Int] = Array(
     ALUOpCodes.ADD,
     ALUOpCodes.SLL,
     ALUOpCodes.SLT,
@@ -22,7 +22,7 @@ object SimToolkit {
     ALUOpCodes.AND
   )
 
-  val ROps = ImmOps :+ ALUOpCodes.SUB
+  val ROps: Array[Int] = ImmOps :+ ALUOpCodes.SUB
 
   def bits32ToInt(value: Long): Int = {
     val binString = value.toBinaryString

@@ -20,9 +20,9 @@ class RegisterFileSim extends RegisterFile {
     dut.io.read2.valid #= false
     dut.io.read2.payload #= 0
 
-    var registers = ListBuffer.empty[Long]
+    var registers: ListBuffer[Long] = ListBuffer.empty[Long]
     var tempIndex = 0
-    var tempData = 0.toLong
+    var tempData: Long = 0.toLong
     for (_ <- 0 to 32){
       registers += 0
     }
