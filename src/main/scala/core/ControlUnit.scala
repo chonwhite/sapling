@@ -2,6 +2,7 @@ package core
 
 import core.OpCodes.InstructionFormat
 import spinal.core._
+//import core.
 
 import scala.language.postfixOps
 
@@ -24,17 +25,41 @@ class ControlUnit extends Component {
   val codeGenerator = new MicroCodeGenerator(decoder)
   val memoryAccess = new MemoryAccess()
 
-  // PC -> instructionFetcher
   instructionFetcher.io.address << PC.io.address
+
+  val isBranch : Bool = Bool(true)
+  val IFID: Stage1 = core.Stage1(isBranch, PC.io.address, instructionFetcher.io.instruction)
+
   // instructionFetcher -> decoder
-  decoder.io.inst << instructionFetcher.io.instruction
-  // decoder -> registerFile
+  decoder.io.inst << IFID.instruction
+
+  val IDEX: Stage2 = core.Stage2(isBranch, codeGenerator.aluOpCodes)
+
   connectDecoderToRegisterFile()
+
+  IDEX.control.aluOpCode := codeGenerator.aluOpCodes //TODO(
+  IDEX.reg1 := registerFile.io.read1_data
+  IDEX.reg2 := registerFile.io.read2_data
+
+  // EX->MEM
   // registerFile -> ALU
-  configALUInputMux()
-  alu.io.op <> codeGenerator.aluOpCodes
-  alu.io.s1 <> registerFile.io.read1_data
-  alu.io.s2 <> data.aluB
+
+  val EXMEM :Stage3 = core.Stage3()
+
+//  alu.io.s1.muxList(IDEX.control.aluSrc1Selector, )
+  alu.io.op := IDEX.opCode
+  alu.io.s1 := IDEX.reg1
+  when(IDEX.control.aluSrc1Selector === 0) {
+    alu.io.s2 := IDEX.reg2
+  }otherwise {
+    alu.io.s2 := IDEX.immediateValue
+  }
+//  alu.io.s2 := IDEX.control.aluSrc2Selector.mux(
+//    0 -> IDEX.reg2,
+//    1 -> IDEX.immediateValue
+//  ) //TODO move to state
+
+
   // branch
   // alu -> mem
   // alu -> registerFile

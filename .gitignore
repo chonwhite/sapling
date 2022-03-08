@@ -1,6 +1,8 @@
 *.class
 *.log
 *.bak
+.DS_Store
+
 
 # sbt specific
 .cache/
@@ -10,6 +12,7 @@ dist/*
 target
 lib_managed/
 src_managed/
+projects/
 project/boot/
 project/plugins/project/
 
