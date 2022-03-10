@@ -22,64 +22,53 @@ class ControlUnit extends Component {
 
   val data = new RegData()
   val branch = new Branch()
-  val codeGenerator = new MicroCodeGenerator(decoder)
+//  val codeGenerator = new MicroCodeGenerator(decoder)
   val memoryAccess = new MemoryAccess()
 
-  instructionFetcher.io.address << PC.io.address
-
   val isBranch : Bool = Bool(true)
+
+  //stage 0 instruction fetch
+  //TODO
+
+  //stage 1 instruction decode;
+  instructionFetcher.io.address << PC.io.address
   val IFID: Stage1 = core.Stage1(isBranch, PC.io.address, instructionFetcher.io.instruction)
 
   // instructionFetcher -> decoder
   decoder.io.inst << IFID.instruction
 
-  val IDEX: Stage2 = core.Stage2(isBranch, codeGenerator.aluOpCodes)
-
   connectDecoderToRegisterFile()
 
-  IDEX.control.aluOpCode := codeGenerator.aluOpCodes //TODO(
-  IDEX.reg1 := registerFile.io.read1_data
-  IDEX.reg2 := registerFile.io.read2_data
+
+  val IDEX: Stage2 = core.Stage2(isBranch, IFID.pc)
+
+  IDEX << registerFile
+  IDEX >> alu //connect to alu;
+
+  IDEX.genControlSignals(decoder)
+
+  //stage 2 execute
+  //TODO branch;
 
   // EX->MEM
-  // registerFile -> ALU
+  val EXMEM :Stage3 = Stage3()
+  EXMEM << alu
 
-  val EXMEM :Stage3 = core.Stage3()
-
-//  alu.io.s1.muxList(IDEX.control.aluSrc1Selector, )
-  alu.io.op := IDEX.opCode
-  alu.io.s1 := IDEX.reg1
-  when(IDEX.control.aluSrc1Selector === 0) {
-    alu.io.s2 := IDEX.reg2
-  }otherwise {
-    alu.io.s2 := IDEX.immediateValue
-  }
-//  alu.io.s2 := IDEX.control.aluSrc2Selector.mux(
-//    0 -> IDEX.reg2,
-//    1 -> IDEX.immediateValue
-//  ) //TODO move to state
-
-
+  val MEMWB : Stage4 = Stage4()
+  MEMWB.aluResult := EXMEM.aluResult
   // branch
   // alu -> mem
   // alu -> registerFile
-  registerFile.io.write.valid <> codeGenerator.regWriteEnable
-  registerFile.io.write.payload <> decoder.io.rd
-  registerFile.io.write_data <> data.writeData
-  data.writeData <> alu.io.res
+  //TODO
+  registerFile.io.write.valid := data.alwaysValid
+  registerFile.io.write.payload := 0
+  registerFile.io.write_data := 0 //TODO
+//  data.writeData <> alu.io.res
   // branch & alu -> pc
   PC.io.op <> data.pcOP
   PC.io.imm <> data.pcIMM
 
 //  val debugger = new CUDebugger(this)
-
-  def configALUInputMux(): Unit = {
-    when(codeGenerator.aluSrc2 === MicroCodes.ALU_SRC_REG) {
-      data.aluB := registerFile.io.read2_data
-    } otherwise {
-      data.aluB := decoder.io.imm
-    }
-  }
 
   def connectDecoderToRegisterFile(): Unit = {
     registerFile.io.read1.valid <> data.alwaysValid
@@ -90,9 +79,9 @@ class ControlUnit extends Component {
 
   class RegData extends Area {
     val alwaysValid: Bool = Bool(true)
-    val writeData: Bits = Bits(width = 32 bits) // pc, alu_res, mem_read;
+//    val writeData: Bits = Bits(width = 32 bits) // pc, alu_res, mem_read;
 
-    val aluB: Bits = Bits(32 bits)
+//    val aluB: Bits = Bits(32 bits)
 
     val pcOP: PC.io.op.type = PC.io.op.clone()
     val pcIMM: PC.io.imm.type = PC.io.imm.clone()
